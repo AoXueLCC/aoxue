@@ -105,7 +105,7 @@ function goConfig() {
 </script>
 
 <template>
-  <div class="page quote-page">
+  <div class="page quote-page" :class="{ 'no-bar': !hasTruck }">
     <header class="page-header">
       <h1 class="page-title">选择车型</h1>
       <div class="header-actions">
@@ -201,7 +201,8 @@ function goConfig() {
       </section>
     </main>
 
-    <div class="bottom-bar">
+    <!-- 底部报价模块：客户点进具体车辆（已选车型）后才展示 -->
+    <div v-if="hasTruck" class="bottom-bar">
       <div class="bar-price">
         <span class="bar-label">当前报价</span>
         <div class="bar-amount">
@@ -209,12 +210,7 @@ function goConfig() {
         </div>
         <span v-if="store.selectionSummary" class="bar-summary">{{ store.selectionSummary }}</span>
       </div>
-      <button
-        class="bar-btn"
-        :class="{ disabled: !hasTruck }"
-        :disabled="!hasTruck"
-        @click="goConfig"
-      >
+      <button class="bar-btn" @click="goConfig">
         {{ btnText }}
         <van-icon name="arrow" size="16" />
       </button>
@@ -225,6 +221,10 @@ function goConfig() {
 <style scoped>
 .quote-page {
   padding-bottom: calc(82px + var(--safe-bottom) + 16px);
+}
+
+.quote-page.no-bar {
+  padding-bottom: calc(24px + var(--safe-bottom));
 }
 
 .page-header {
@@ -451,11 +451,6 @@ function goConfig() {
 
 .bar-btn:active {
   transform: scale(0.98);
-}
-
-.bar-btn.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
 }
 
 .search-in-enter-active,
