@@ -6,9 +6,8 @@ import { TRUCK_TYPES, ENERGY_TYPES, BRAND_WHITELIST } from '../mock'
 import { useQuoteStore } from '../stores/quote'
 import BrandFilter from '../components/BrandFilter.vue'
 import TruckCard from '../components/TruckCard.vue'
-import AnimatedNumber from '../components/AnimatedNumber.vue'
 
-/** Page 01 QuotePage：Header(56px) → 筛选区 → 车辆列表 → Bottom Price Bar(82px) */
+/** Page 01 QuotePage：Header(56px) → 筛选区 → 车辆列表 */
 const router = useRouter()
 const store = useQuoteStore()
 
@@ -29,10 +28,6 @@ const brandMap = ref({})
 
 let timer = null
 
-const hasTruck = computed(() => !!store.truck)
-/** 已选车辆且已有冷机配置=继续上次配置；否则=全新开始（退出配置页时会清空配置） */
-const btnText = computed(() => (hasTruck.value && store.refrigerator ? '继续配置' : '开始配置'))
-
 function truckBrand(truck) {
   return brandMap.value[truck.brandId] || null
 }
@@ -50,6 +45,8 @@ function loadTrucks() {
 }
 
 onMounted(async () => {
+  // 回到首页即清空价格/配置数据（覆盖返回键、逐层返回等所有到达首页的路径）
+  store.reset()
   loadTrucks()
   try {
     const brands = await fetchBrands()
@@ -98,14 +95,10 @@ function resetFilters() {
   keyword.value = ''
   loadTrucks()
 }
-
-function goConfig() {
-  if (hasTruck.value) router.push('/config')
-}
 </script>
 
 <template>
-  <div class="page quote-page" :class="{ 'no-bar': !hasTruck }">
+  <div class="page quote-page">
     <header class="page-header">
       <h1 class="page-title">选择车型</h1>
       <div class="header-actions">
@@ -201,29 +194,11 @@ function goConfig() {
       </section>
     </main>
 
-    <!-- 底部报价模块：客户点进具体车辆（已选车型）后才展示 -->
-    <div v-if="hasTruck" class="bottom-bar">
-      <div class="bar-price">
-        <span class="bar-label">当前报价</span>
-        <div class="bar-amount">
-          <AnimatedNumber :value="store.totalPrice" />
-        </div>
-        <span v-if="store.selectionSummary" class="bar-summary">{{ store.selectionSummary }}</span>
-      </div>
-      <button class="bar-btn" @click="goConfig">
-        {{ btnText }}
-        <van-icon name="arrow" size="16" />
-      </button>
-    </div>
   </div>
 </template>
 
 <style scoped>
 .quote-page {
-  padding-bottom: calc(82px + var(--safe-bottom) + 16px);
-}
-
-.quote-page.no-bar {
   padding-bottom: calc(24px + var(--safe-bottom));
 }
 
@@ -419,38 +394,6 @@ function goConfig() {
 
 .empty-btn:active {
   transform: scale(0.96);
-}
-
-.bar-summary {
-  font-size: 10px;
-  color: var(--text-secondary);
-  margin-top: 2px;
-  max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.bar-btn {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  width: 120px;
-  height: 40px;
-  border: none;
-  border-radius: 20px;
-  background: var(--primary);
-  color: #ffffff;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: transform 0.15s ease-out, opacity 0.15s ease-out;
-}
-
-.bar-btn:active {
-  transform: scale(0.98);
 }
 
 .search-in-enter-active,
