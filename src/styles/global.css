@@ -1,0 +1,363 @@
+/* ============================================================
+   冷藏车智能报价器 · UI Design System V2.0（按参考图复刻）
+   配色 / 字体 / 圆角 / 间距 / 阴影 / 动画 统一由 CSS 变量管理
+   ============================================================ */
+
+:root {
+  /* ---- 颜色 ---- */
+  --primary: #0066ff;
+  --primary-light: #ebf2ff;   /* 蓝色标签背景 */
+  --selected-bg: #f0f5ff;     /* 选中卡片淡蓝背景 */
+  --price: #e60012;           /* 价格高亮红 */
+  --success: #00b578;
+  --success-light: #e6f7f0;   /* 成功标签背景 */
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --text-main: #1d2129;
+  --text-secondary: #4e5969;
+  --text-placeholder: #86909c;
+  --text-disabled: #c9cdd4;
+  --border: #e5e6eb;
+  --border-light: #f2f3f5;
+  --tag-bg: #f2f3f5;
+  --bg: #f7f8fa;
+  --card: #ffffff;
+
+  /* ---- 字体等级（紧凑体系） ---- */
+  --fs-page-title: 18px;  /* 页面标题 */
+  --fs-section: 16px;     /* 模块标题（选择冷机/配置清单） */
+  --fs-vehicle: 14px;     /* 卡片标题/车系名称 */
+  --fs-body: 13px;        /* 正文/参数 */
+  --fs-desc: 12px;        /* 辅助文字 */
+  --fs-caption: 11px;     /* 标签文字 */
+  --fs-price: 16px;       /* 常规价格 */
+  --fs-price-lg: 20px;    /* 合计价格 */
+  --fs-price-xl: 22px;    /* 报价单合计 */
+
+  /* ---- 圆角 ---- */
+  --radius-card: 10px;    /* 卡片 */
+  --radius-btn: 22px;     /* 胶囊按钮 */
+  --radius-input: 14px;
+  --radius-chip: 14px;    /* 28px 筛选标签 */
+  --radius-tag: 4px;      /* 方角小标签 */
+  --radius-image: 8px;
+  --radius-sheet: 28px;
+
+  /* ---- 阴影（弱化，轻投影） ---- */
+  --shadow-1: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-2: 0 -2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-3: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  /* ---- 间距（8pt Grid） ---- */
+  --space-page: 16px;
+  --space-section: 20px;
+  --space-card: 12px;
+  --space-gap: 10px;
+
+  /* ---- 安全区 ---- */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'HarmonyOS Sans SC',
+    'HarmonyOS Sans', 'PingFang SC', 'Microsoft YaHei', Roboto, sans-serif;
+  font-size: var(--fs-body);
+  line-height: 1.5;
+  color: var(--text-main);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+.page {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* ============================================================
+   通用组件基类
+   ============================================================ */
+
+/* 卡片：白底 / 圆角10 / 内边距12 / 轻阴影 */
+.card {
+  background: var(--card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-1);
+}
+
+/* 主按钮：胶囊 44px 高 */
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 44px;
+  border: none;
+  border-radius: var(--radius-btn);
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease-out, opacity 0.15s;
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* 次按钮 */
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-btn);
+  background: var(--card);
+  color: var(--text-main);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform 0.15s ease-out;
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+/* 文字按钮：低优先级 */
+.btn-text {
+  border: none;
+  background: transparent;
+  color: var(--primary);
+  font-size: 13px;
+  cursor: pointer;
+  padding: 8px;
+}
+
+/* 筛选标签：28px 高 / 圆角14 */
+.chip {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: var(--radius-chip);
+  border: none;
+  background: var(--tag-bg);
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease-out;
+}
+
+.chip:active {
+  transform: scale(0.96);
+}
+
+.chip.on {
+  background: var(--primary);
+  color: #ffffff;
+}
+
+/* Tag：20px 高 / 方角4 / 蓝底 */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--radius-tag);
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: var(--fs-caption);
+}
+
+.tag.secondary {
+  background: var(--tag-bg);
+  color: var(--text-secondary);
+}
+
+.tag.success {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.tag.warning {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--warning);
+}
+
+/* 横向滚动容器（隐藏滚动条） */
+.h-scroll {
+  display: flex;
+  gap: var(--space-gap);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+.h-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* 横向滚动容器内 chip 等距滚动（左内边距对齐页面边距） */
+.h-scroll-pad {
+  padding-left: var(--space-page);
+  padding-right: var(--space-page);
+}
+
+/* 固定底部操作栏：64px / 上边框 / 轻投影 */
+.bottom-bar {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 0;
+  z-index: 100;
+  width: 100%;
+  max-width: 430px;
+  min-height: 64px;
+  padding: 10px var(--space-page) calc(10px + var(--safe-bottom));
+  background: var(--card);
+  border-top: 1px solid var(--border-light);
+  box-shadow: var(--shadow-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* 底部栏左侧价格区 */
+.bar-price {
+  min-width: 0;
+  flex: 1;
+}
+
+.bar-price .bar-label {
+  font-size: 13px;
+  color: var(--text-main);
+}
+
+.bar-price .bar-amount {
+  font-size: var(--fs-price-lg);
+  font-weight: 600;
+  color: var(--price);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.3;
+}
+
+/* 页面内容底部留白（避免被底栏遮挡） */
+.page-with-bar {
+  padding-bottom: calc(64px + var(--safe-bottom) + 12px);
+}
+
+/* 数字等宽 */
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 长文本省略 */
+.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ellipsis-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ============================================================
+   Vant 组件主题（对齐参考图配色）
+   ============================================================ */
+:root:root {
+  --van-primary-color: #0066ff;
+  --van-danger-color: #ef4444;
+  --van-success-color: #00b578;
+  --van-warning-color: #f59e0b;
+  --van-text-color: #1d2129;
+  --van-text-color-2: #4e5969;
+  --van-text-color-3: #86909c;
+  --van-border-color: #e5e6eb;
+  --van-background: #f7f8fa;
+  --van-background-2: #ffffff;
+  --van-radius-md: 14px;
+  --van-popup-round-radius: 28px;
+  --van-toast-border-radius: 12px;
+  --van-toast-background: rgba(29, 33, 41, 0.85);
+  --van-dialog-border-radius: 16px;
+  --van-switch-size: 28px;
+  --van-button-radius: 22px;
+}
+
+.van-toast {
+  z-index: 400;
+}
+
+/* ============================================================
+   动画
+   ============================================================ */
+
+/* 卡片进入：淡入 + 上移 */
+.card-in-enter-active {
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+.card-in-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* 页面淡入（后备，路由过渡已由 App.vue 控制） */
+.page-fade-enter-active {
+  transition: opacity 0.3s ease-out;
+}
+
+.page-fade-enter-from {
+  opacity: 0;
+}
+
+/* Skeleton 骨架屏 */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #f7f7f7 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.2s infinite;
+  border-radius: 8px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

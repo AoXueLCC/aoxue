@@ -1,0 +1,13 @@
+node_modules
+dist
+*.local
+.DS_Store
+*.log
+
+# 抓取/测试产物，不属于应用代码
+shots/
+trucks_*.json
+truck_full_sample.json
+brands_summary.json
+xlsx_dump.json
+f105d120-*.png
