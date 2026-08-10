@@ -1,10 +1,11 @@
 <script setup>
 import { ref, computed } from 'vue'
-import { showToast } from 'vant'
+import { showImagePreview, showToast } from 'vant'
 import { svgImg } from '../mock/helpers'
 
 /**
  * Vehicle Gallery：大图轮播 + 数量提示 + 视频播放（16:9 卡片，56px 播放按钮）
+ * 点击图片 → 全屏预览（van-image-preview 支持双指缩放）
  */
 const props = defineProps({
   images: { type: Array, default: () => [] },
@@ -20,6 +21,16 @@ const placeholder = computed(() =>
 )
 
 const countText = computed(() => `${current.value + 1}/${props.images.length}`)
+
+function onPreview(index) {
+  if (!props.images.length) return
+  showImagePreview({
+    images: props.images,
+    startPosition: index,
+    closeable: true,
+    closeIconPosition: 'top-right'
+  })
+}
 
 function openVideo() {
   playing.value = true
@@ -43,7 +54,7 @@ function onVideoError() {
         @change="(i) => (current = i)"
       >
         <van-swipe-item v-for="(img, i) in images" :key="i">
-          <img :src="img" :alt="`车辆图片${i + 1}`" class="swipe-img" />
+          <img :src="img" :alt="`车辆图片${i + 1}`" class="swipe-img" @click="onPreview(i)" />
         </van-swipe-item>
       </van-swipe>
       <img v-else :src="placeholder" alt="车辆图片占位" class="swipe-img" />

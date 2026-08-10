@@ -33,12 +33,13 @@ export function filterTrucks({ brand = 'all', truckType = 'all', energy = 'all',
   return list
 }
 
-/** 冷机筛选：按车型能源（纯电→电动冷机 / 燃油→柴油机冷机 / 混动→全部） */
+/** 冷机筛选：按车型能源（纯电→电动冷机 / 油车→油车冷机 / 混动→全部） */
 export function filterRefrigerators({ energy = '', truckType = '' } = {}) {
   let list = [...REFRIGERATORS]
-  if (energy === '纯电' || energy === '柴油' || energy === '汽油') {
-    const want = energy === '纯电' ? '纯电' : '燃油'
-    list = list.filter((r) => r.energy === want)
+  if (energy === '纯电') {
+    list = list.filter((r) => r.energy === '纯电')
+  } else if (energy === '油车') {
+    list = list.filter((r) => r.energy === '油车')
   }
   if (truckType && truckType !== 'all') {
     const matched = list.filter((r) => r.fitTypes.includes(truckType))

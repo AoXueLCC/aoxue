@@ -69,7 +69,7 @@ function goNext() {
       <div class="select-title">
         <h2>选择冷机</h2>
         <p v-if="truck" class="select-sub">
-          {{ truck.name }} · {{ truck.energy }} 车型 {{ truck.energy === '混动' ? '可选全部冷机' : truck.energy === '纯电' ? '匹配电动冷机' : '匹配柴油机冷机' }}
+          {{ truck.name }} · {{ truck.energy }} 车型 {{ truck.energy === '混动' ? '可选全部冷机' : truck.energy === '纯电' ? '匹配电动冷机' : '匹配油车冷机' }}
         </p>
       </div>
 

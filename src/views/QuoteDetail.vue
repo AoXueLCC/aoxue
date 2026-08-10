@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { showToast } from 'vant'
 import { HISTORY_KEY } from '../stores/quote'
 import { fmtPrice } from '../mock/helpers'
+import { captureDomAsImage, previewImage } from '../utils/exportImage'
 
 /**
  * Page C 报价单详情页（设计规格 页面C）：
@@ -78,6 +79,21 @@ async function share() {
 
 function save() {
   showToast('已保存到报价历史')
+}
+
+const imgSaving = ref(false)
+
+async function saveImage() {
+  if (imgSaving.value || !quote.value) return
+  imgSaving.value = true
+  try {
+    const dataUrl = await captureDomAsImage(document.querySelector('.quote-main'))
+    previewImage(dataUrl)
+  } catch {
+    showToast('生成图片失败，请重试')
+  } finally {
+    imgSaving.value = false
+  }
 }
 </script>
 
@@ -171,6 +187,13 @@ function save() {
     </div>
 
     <div v-if="quote" class="action-bar">
+      <button class="action-item" :disabled="imgSaving" @click="saveImage">
+        <van-loading v-if="imgSaving" size="18" color="var(--text-secondary)" />
+        <template v-else>
+          <van-icon name="photo-o" size="20" />
+          <span>保存图片</span>
+        </template>
+      </button>
       <button class="action-item" @click="exportPdf">
         <van-icon name="printer-o" size="20" />
         <span>导出PDF</span>

@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuoteStore } from '../stores/quote'
 import ConfigSummary from '../components/ConfigSummary.vue'
+import { captureDomAsImage, previewImage } from '../utils/exportImage'
+import { showToast } from 'vant'
 
 /**
  * Page 04 QuoteConfirmPage：配置明细(报价单风格) → 底部总价 + 保存报价
@@ -11,6 +13,22 @@ const router = useRouter()
 const store = useQuoteStore()
 
 const saving = ref(false)
+const imgSaving = ref(false)
+
+async function onSaveImage() {
+  if (imgSaving.value) return
+  imgSaving.value = true
+  try {
+    const dataUrl = await captureDomAsImage(document.querySelector('.save-main'), {
+      finalTotal: store.finalTotal
+    })
+    previewImage(dataUrl)
+  } catch {
+    showToast('生成图片失败，请重试')
+  } finally {
+    imgSaving.value = false
+  }
+}
 
 function onSave() {
   saving.value = true
@@ -34,7 +52,13 @@ function onRestart() {
         <van-icon name="arrow-left" size="20" />
       </button>
       <h1 class="page-title">确认报价</h1>
-      <span class="header-space"></span>
+      <button class="header-img-btn" :disabled="imgSaving" @click="onSaveImage">
+        <van-loading v-if="imgSaving" size="16" color="#ffffff" />
+        <template v-else>
+          <van-icon name="photo-o" size="15" />
+          保存图片
+        </template>
+      </button>
     </header>
 
     <div class="save-main">
@@ -102,8 +126,26 @@ export default { components: { AnimatedNumber } }
   color: var(--text-main);
 }
 
-.header-space {
-  width: 40px;
+.header-img-btn {
+  height: 34px;
+  padding: 0 12px;
+  border: none;
+  border-radius: 17px;
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.header-img-btn:active {
+  transform: scale(0.95);
+}
+
+.header-img-btn:disabled {
+  opacity: 0.6;
 }
 
 .save-main {

@@ -17,7 +17,7 @@ const loading = ref(true)
 
 const energyTagClass = computed(() => {
   if (!truck.value) return ''
-  return { 纯电: 'tag-primary', 混动: 'tag-warning' }[truck.value.energy] || ''
+  return { 纯电: 'tag-primary', 油车: 'tag-warning', 混动: 'tag-warning' }[truck.value.energy] || ''
 })
 
 onMounted(async () => {

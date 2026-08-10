@@ -109,8 +109,7 @@ export const TRUCK_TYPES = [
 /** 能源分类（胶囊筛选） */
 export const ENERGY_TYPES = [
   { key: 'all', label: '全部' },
-  { key: '柴油', label: '柴油' },
-  { key: '汽油', label: '汽油' },
+  { key: '油车', label: '油车' },
   { key: '混动', label: '混动' },
   { key: '纯电', label: '纯电' }
 ]
