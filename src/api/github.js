@@ -78,8 +78,8 @@ export async function testConnection() {
 }
 
 /** 读取仓库文件（Contents API，UTF-8 内容） */
-export async function getRepoFile(path) {
-  const json = await gh(`/contents/${path}`)
+export async function getRepoFile(path, branch = 'main') {
+  const json = await gh(`/contents/${path}${branch ? `?ref=${branch}` : ''}`)
   return { sha: json.sha, content: atob(json.content.replace(/\s+/g, '')) }
 }
 
@@ -92,10 +92,10 @@ function utf8ToBase64(str) {
 }
 
 /** 更新仓库文本文件（存在则带 sha 覆盖，不存在则新建） */
-export async function putRepoFile(path, content, message) {
-  const body = { message, content: utf8ToBase64(content), branch: 'main' }
+export async function putRepoFile(path, content, message, branch = 'main') {
+  const body = { message, content: utf8ToBase64(content), branch }
   try {
-    body.sha = (await getRepoFile(path)).sha
+    body.sha = (await getRepoFile(path, branch)).sha
   } catch {
     /* 新文件无需 sha */
   }
@@ -104,9 +104,9 @@ export async function putRepoFile(path, content, message) {
 
 /** 上传二进制文件（图片/视频，base64 内容），返回 Pages 访问 URL */
 export async function uploadBinary(path, base64, message) {
-  const body = { message, content: base64, branch: 'main' }
+  const body = { message, content: base64, branch: 'gh-pages' }
   try {
-    body.sha = (await getRepoFile(path)).sha
+    body.sha = (await getRepoFile(path, 'gh-pages')).sha
   } catch {
     /* 新文件无需 sha */
   }
@@ -115,7 +115,8 @@ export async function uploadBinary(path, base64, message) {
   return `https://${s.owner}.github.io/${s.repo}/${path}`
 }
 
-/** 发布数据：更新 data.json + version.json（版本号 +1，前端自动拉取最新） */
+/** 发布数据：更新 data.json + version.json（版本号 +1，前端自动拉取最新）
+ * 部署走 gh-pages 分支（静态部署，不依赖 Actions），线上路径即分支根目录的 data/ */
 export async function publishData(dataObj, currentVersion) {
   const nextV = Number(currentVersion || 0) + 1
   const payload = {
@@ -124,8 +125,8 @@ export async function publishData(dataObj, currentVersion) {
     updatedAt: new Date().toISOString()
   }
   const message = `发布数据 v${nextV}`
-  await putRepoFile('public/data/data.json', JSON.stringify(payload, null, 2), message)
-  await putRepoFile('public/data/version.json', JSON.stringify({ v: nextV }, null, 2), message)
+  await putRepoFile('data/data.json', JSON.stringify(payload, null, 2), message, 'gh-pages')
+  await putRepoFile('data/version.json', JSON.stringify({ v: nextV }, null, 2), message, 'gh-pages')
   addPublishLog({
     v: nextV,
     at: Date.now(),
