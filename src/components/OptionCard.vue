@@ -1,4 +1,5 @@
 <script setup>
+import { showImagePreview } from 'vant'
 import { fmtPrice } from '../mock/helpers'
 
 /**
@@ -6,7 +7,7 @@ import { fmtPrice } from '../mock/helpers'
  * Flex Row：Radio 18×18 → 缩略图 50×40 圆角4 → 标题13px → 价格 14px Bold #E60012
  * 选中态：边框 1.5px #0066FF / 背景 #F9FCFF / Radio 蓝勾
  */
-defineProps({
+const props = defineProps({
   item: { type: Object, required: true },
   title: { type: String, default: '' },
   subtitle: { type: String, default: '' },
@@ -16,6 +17,12 @@ defineProps({
 })
 
 const emit = defineEmits(['select'])
+
+/** 点击缩略图弹出大图预览（不触发选中） */
+function preview() {
+  if (!props.item.image) return
+  showImagePreview({ images: [props.item.image], closeable: true })
+}
 </script>
 
 <template>
@@ -24,7 +31,10 @@ const emit = defineEmits(['select'])
       <van-icon v-if="selected" name="success" size="11" />
     </span>
 
-    <img v-if="item.image" :src="item.image" :alt="title" class="opt-img" />
+    <span v-if="item.image" class="opt-img-wrap" @click.stop="preview">
+      <img :src="item.image" :alt="title" class="opt-img" />
+      <i class="zoom-badge"><van-icon name="photograph" size="9" /></i>
+    </span>
     <span v-else class="opt-icon">{{ icon }}</span>
 
     <div class="opt-main">
@@ -35,7 +45,7 @@ const emit = defineEmits(['select'])
       <span v-if="subtitle" class="opt-sub ellipsis">{{ subtitle }}</span>
     </div>
 
-    <span class="opt-price num">¥{{ fmtPrice(item.price) }}</span>
+    <span class="opt-price num">{{ item.price ? '¥' + fmtPrice(item.price) : '面议' }}</span>
   </div>
 </template>
 
@@ -80,13 +90,36 @@ const emit = defineEmits(['select'])
   color: #ffffff;
 }
 
-.opt-img {
+.opt-img-wrap {
+  position: relative;
   width: 50px;
   height: 40px;
   border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.opt-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
   object-fit: cover;
   background: var(--bg);
-  flex-shrink: 0;
+}
+
+.zoom-badge {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: normal;
 }
 
 .opt-icon {

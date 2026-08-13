@@ -94,8 +94,8 @@ export function getBrandById(id) {
   return BRANDS.find((b) => b.id === id) || BRANDS[0]
 }
 
-/** 产品线品牌白名单（前端筛选与列表共用，仅展示这 4 个品牌） */
-export const BRAND_WHITELIST = ['foton', 'jmc', 'yuanzheng', 'karry']
+/** 产品线品牌白名单（前端筛选与列表共用，仅展示这几个品牌） */
+export const BRAND_WHITELIST = ['foton', 'jmc', 'yuanzheng', 'karry', 'jac']
 
 /** 车型分类（胶囊筛选） */
 export const TRUCK_TYPES = [

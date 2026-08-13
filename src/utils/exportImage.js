@@ -25,6 +25,49 @@ async function imgToDataURL(src) {
   }
 }
 
+/** dataURL/URL 加载为 Image；失败返回 null */
+function loadImage(src) {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => resolve(img)
+    img.onerror = () => resolve(null)
+    img.src = src
+  })
+}
+
+const SCALE = 2
+const QR_SIZE = 96 // 二维码边长（CSS px）
+const FOOTER_H = 168 // 页脚高度（CSS px），容纳二维码 + 提示文字
+
+/**
+ * 在截图底部追加二维码页脚（白底 + 居中二维码 + 提示文字），客户扫码回到报价链接
+ */
+async function composeQrFooter(canvas) {
+  const out = document.createElement('canvas')
+  out.width = canvas.width
+  out.height = canvas.height + FOOTER_H * SCALE
+  const ctx = out.getContext('2d')
+  ctx.fillStyle = '#ffffff'
+  ctx.fillRect(0, 0, out.width, out.height)
+  ctx.drawImage(canvas, 0, 0)
+
+  const qr = await loadImage(await imgToDataURL('data/images/qr-link.png'))
+  if (qr) {
+    const qrPx = QR_SIZE * SCALE
+    const x = (out.width - qrPx) / 2
+    const y = canvas.height + 20 * SCALE
+    ctx.drawImage(qr, x, y, qrPx, qrPx)
+  }
+
+  ctx.fillStyle = '#999999'
+  ctx.font = `${13 * SCALE}px -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif`
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'top'
+  ctx.fillText('扫码查看报价', out.width / 2, canvas.height + (20 + QR_SIZE + 12) * SCALE)
+
+  return out
+}
+
 /**
  * 截图指定 DOM 区域为 PNG dataURL
  * @param {HTMLElement} el 截图目标元素
@@ -64,7 +107,8 @@ export async function captureDomAsImage(el, opts = {}) {
       useCORS: true,
       logging: false
     })
-    return canvas.toDataURL('image/png')
+    const withQr = await composeQrFooter(canvas)
+    return withQr.toDataURL('image/png')
   } finally {
     wrap.remove()
   }

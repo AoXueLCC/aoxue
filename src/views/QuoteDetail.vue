@@ -34,6 +34,7 @@ const detailLines = computed(() => {
     { label: '冷机价格', value: q.refrigerator?.price || 0 },
     { label: '厢体价格', value: q.body?.price || 0 }
   ]
+  if (q.chassis) lines.push({ label: '底盘配置', value: q.chassis.name, text: true })
   if (q.accessories?.length) {
     for (const a of q.accessories) lines.push({ label: a.name, value: a.price })
   }
@@ -167,7 +168,8 @@ async function saveImage() {
         <h2 class="q-title">配置明细</h2>
         <div v-for="line in detailLines" :key="line.label" class="line-row">
           <span class="line-name ellipsis">{{ line.label }}</span>
-          <span v-if="line.value" class="line-value num">¥{{ fmtPrice(line.value) }}</span>
+          <span v-if="line.text" class="line-value">{{ line.value }}</span>
+          <span v-else-if="line.value" class="line-value num">¥{{ fmtPrice(line.value) }}</span>
           <span v-else class="line-value line-na">面议</span>
         </div>
         <div class="line-row">

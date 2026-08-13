@@ -70,7 +70,6 @@ function onBrandChange() {
 }
 
 function onTruckTypeChange(key) {
-  energy.value = 'all'
   truckType.value = key
   loadTrucks()
 }
@@ -292,10 +291,15 @@ function resetFilters() {
   z-index: 18;
   background: var(--card);
   padding-top: 8px;
+  padding-bottom: 12px;
 }
 
 .filter-group {
   margin-bottom: 16px;
+}
+
+.filter-group:last-child {
+  margin-bottom: 0;
 }
 
 .filter-title {

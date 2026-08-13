@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { showImagePreview } from 'vant'
 import { fmtPrice, svgImg } from '../mock/helpers'
 
 /**
@@ -20,6 +21,12 @@ const imgSrc = computed(() =>
     ? props.item.image
     : svgImg({ icon: '❄️', title: props.item.model, sub: '冷机实拍图 · 待上传', c1: '#0EA5E9', c2: '#6366F1' })
 )
+
+/** 点击小图弹出大图预览（仅实机图可预览，占位图不弹） */
+function preview() {
+  if (!props.item.image) return
+  showImagePreview({ images: [props.item.image], closeable: true })
+}
 </script>
 
 <template>
@@ -28,7 +35,12 @@ const imgSrc = computed(() =>
     :class="{ selected }"
     @click="emit('select', item)"
   >
-    <img :src="imgSrc" :alt="item.model" class="card-img" />
+    <div class="img-wrap" @click.stop="preview">
+      <img :src="imgSrc" :alt="item.model" class="card-img" />
+      <span v-if="item.image" class="zoom-badge">
+        <van-icon name="photograph" size="12" />
+      </span>
+    </div>
 
     <div class="card-main">
       <div class="card-head">
@@ -85,12 +97,32 @@ const imgSrc = computed(() =>
   box-shadow: 0 0 0 3px rgba(22, 119, 255, 0.12), 0 6px 20px rgba(22, 119, 255, 0.12);
 }
 
-.card-img {
+.img-wrap {
+  position: relative;
   width: 104px;
   height: 84px;
+  flex-shrink: 0;
+}
+
+.card-img {
+  width: 100%;
+  height: 100%;
   border-radius: 12px;
   object-fit: cover;
-  flex-shrink: 0;
+}
+
+.zoom-badge {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-main {

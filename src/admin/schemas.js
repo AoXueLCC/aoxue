@@ -35,6 +35,7 @@ export const TRUCK_SCHEMA = {
     { group: '尺寸参数', key: 'payload', label: '额定载重', type: 'text', placeholder: '如 1.45吨' },
     { group: '能源配置', key: 'battery', label: '电池', type: 'text', placeholder: '如 100kWh 磷酸铁锂电池（纯电车型）' },
     { group: '能源配置', key: 'tankVolume', label: '油箱', type: 'text', placeholder: '如 120L 铁油箱（油车车型）' },
+    { group: '能源配置', key: 'chassisOptions', label: '底盘档位（JSON，可选）', type: 'textarea', placeholder: '[{"id":"b1","name":"江铃VAN卡-42度","battery":"42度","price":null,"default":true},{"id":"b2","name":"江铃VAN卡-53度","battery":"53度","price":null}]', hint: '配置流程底盘页的档位选项：id/name/battery 或 engine（纯电写电池、油车写发动机）/price（null=参考价未定，有值则覆盖整车价）/default（标配默认勾选）。留空则底盘页显示"车型名-标配"' },
     { group: '能源配置', key: 'defaultAC', label: '标配冷机型号', type: 'text', placeholder: '如 华盛EV600分体（须与冷机表型号一致）' },
     { group: '媒体', key: 'video', label: '宣传视频', type: 'video', hint: 'MP4 格式，建议 50MB 以内' },
     { group: '媒体', key: 'gallery', label: '车辆图片（第一张为主图）', type: 'images', hint: '支持多张，JPG/PNG，自动压缩' }
@@ -85,7 +86,9 @@ export const BODY_SCHEMA = {
   fields: [
     { group: '基本信息', key: 'id', label: 'ID', type: 'text', placeholder: '如 b11（唯一）', required: true },
     { group: '基本信息', key: 'brand', label: '品牌', type: 'text', placeholder: '如 中集', required: true },
-    { group: '基本信息', key: 'name', label: '厢体名称', type: 'text', placeholder: '如 中集 K2 不锈钢地板厢', required: true },
+    { group: '基本信息', key: 'name', label: '厢体名称', type: 'text', placeholder: '如 原厂普通厢', required: true },
+    { group: '基本信息', key: 'group', label: '所属大类（配置页 tab）', type: 'select', options: ['原厂厢', '山东中集厢'], required: true },
+    { group: '基本信息', key: 'hook', label: '肉钩厢标记', type: 'select', options: ['true', 'false'], hint: '选 true = 肉钩厢（配件页显示肉钩配件），如 原厂肉钩厢/国道厢-肉钩厢' },
     { group: '基本信息', key: 'price', label: '价格（元）', type: 'number', required: true },
     { group: '规格', key: 'thickness', label: '保温厚度', type: 'text', placeholder: '如 120mm' },
     { group: '规格', key: 'material', label: '材质', type: 'text', placeholder: '如 不锈钢地板+铝合金' },
@@ -112,8 +115,14 @@ export const ACCESSORY_SCHEMA = {
     { group: '基本信息', key: 'icon', label: '图标（emoji）', type: 'text', placeholder: '如 🛗', required: true },
     { group: '基本信息', key: 'name', label: '配装名称', type: 'text', placeholder: '如 液压尾板', required: true },
     { group: '基本信息', key: 'brand', label: '品牌/厂商', type: 'text', placeholder: '如 畅友力' },
-    { group: '基本信息', key: 'category', label: '分类（配置页 tab）', type: 'select', options: ['门体', '温控', '安全配置', '其他'], required: true },
-    { group: '基本信息', key: 'price', label: '价格（元）', type: 'number', required: true }
+    { group: '基本信息', key: 'category', label: '分类（配置页 tab）', type: 'select', options: ['底盘配装', '厢体配装', '温控配装', '配件'], required: true },
+    { group: '基本信息', key: 'price', label: '价格（元）', type: 'number', required: true },
+    { group: '分组规则', key: 'group', label: '分组名（同组单选互斥）', type: 'text', placeholder: '如 地板 / 裙边高度 / 外蒙皮', hint: '厢体配装按分组展示：地板、裙边高度、额外侧门（通用）；外蒙皮、内蒙皮（特殊）' },
+    { group: '分组规则', key: 'mode', label: '选择模式', type: 'select', options: ['single', 'toggle'], hint: 'single=组内单选互斥（地板/裙边/蒙皮）；toggle=独立开关（额外侧门）。留空=普通多选' },
+    { group: '分组规则', key: 'bodyTypes', label: '适用中集厢体（特殊配装）', type: 'multiselect', options: ['G系列', 'M系列', '国道厢'], hint: '仅客户选中对应中集厢体时显示；留空=所有厢体通用' },
+    { group: '分组规则', key: 'default', label: '组内默认标配', type: 'select', options: ['true', 'false'], hint: '选 true 的项进入时自动勾选并显示"标配"标签（如 内蒙皮-VR热塑版）' },
+    { group: '适配', key: 'fitTypes', label: '适配车型', type: 'multiselect', options: ['微卡', '小卡', '轻卡', '中卡'], hint: '配置页按当前车型过滤，未匹配则不显示' },
+    { group: '适配', key: 'hookOnly', label: '仅肉钩厢显示', type: 'select', options: ['true', 'false'], hint: '选 true 的配件仅在选中肉钩厢（原厂肉钩厢/国道厢-肉钩厢）时显示，如 肉钩' }
   ]
 }
 

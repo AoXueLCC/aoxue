@@ -10,13 +10,13 @@ import AnimatedNumber from '../components/AnimatedNumber.vue'
 
 /**
  * Page 03 TruckConfigPage：Header → StepBar(56) → Vehicle Summary(100) → 区域标题 → Option List → Price Bar(64)
- * 步骤映射：冷机=0 / 厢体=1 / 配装=2(门体·温控·其他) / 选装=3(安全配置) / 确认=4(/save)
+ * 步骤映射：底盘=0 / 冷机=1 / 厢体=2 / 配装=3(底盘配装·厢体配装·温控配装) / 配件=4 / 确认=5(/save)
  */
 const router = useRouter()
 const store = useQuoteStore()
 
 const truck = computed(() => store.truck)
-const activeTab = ref('refrigerator')
+const activeTab = ref('chassis')
 const loading = ref(true)
 
 const refrigerators = ref([])
@@ -24,50 +24,188 @@ const bodies = ref([])
 const accessories = ref([])
 
 const TABS = [
+  { key: 'chassis', label: '底盘' },
   { key: 'refrigerator', label: '冷机' },
   { key: 'body', label: '厢体' },
-  { key: 'door', label: '门体' },
-  { key: 'temp', label: '温控' },
-  { key: 'safety', label: '安全配置' },
-  { key: 'other', label: '其他' }
+  { key: 'accessory', label: '配装' },
+  { key: 'parts', label: '配件' }
 ]
 
-/** tab → 步骤索引：冷机0 厢体1 配装(门体/温控/其他)2 选装(安全配置)3 */
-const TAB_STEP = { refrigerator: 0, body: 1, door: 2, temp: 2, safety: 3, other: 2 }
+/** tab → 步骤索引：底盘0 冷机1 厢体2 配装3 配件4 */
+const TAB_STEP = { chassis: 0, refrigerator: 1, body: 2, accessory: 3, parts: 4 }
 
 const currentStep = computed(() => TAB_STEP[activeTab.value] ?? 0)
 
-/** 当前步骤的子分类 tab：配装=门体/温控/其他，选装=安全配置 */
+/** 子分类 tab 状态：厢体=原厂厢/山东中集厢，配装=底盘配装/厢体配装/温控配装 */
+const bodyGroup = ref('fac')
+const accCategory = ref('底盘配装')
+
 const subTabs = computed(() => {
-  if (currentStep.value === 2) return TABS.filter((t) => ['door', 'temp', 'other'].includes(t.key))
-  if (currentStep.value === 3) return TABS.filter((t) => t.key === 'safety')
+  if (activeTab.value === 'body') {
+    return [
+      { key: 'fac', label: '原厂厢' },
+      { key: 'cimc', label: '山东中集厢' }
+    ]
+  }
+  if (activeTab.value === 'accessory') {
+    return [
+      { key: '底盘配装', label: '底盘配装' },
+      { key: '厢体配装', label: '厢体配装' },
+      { key: '温控配装', label: '温控配装' }
+    ]
+  }
   return []
 })
+
+function subTabOn(t) {
+  if (activeTab.value === 'body') return bodyGroup.value === t.key
+  if (activeTab.value === 'accessory') return accCategory.value === t.key
+  return false
+}
+
+function selectSubTab(t) {
+  if (activeTab.value === 'body') bodyGroup.value = t.key
+  else if (activeTab.value === 'accessory') accCategory.value = t.key
+}
 
 const coverImg = computed(() =>
   truck.value && truck.value.gallery && truck.value.gallery.length ? truck.value.gallery[0] : ''
 )
 
-/** 默认勾选原厂普通厢：只在进入厢体步骤时生效（冷机步骤不加价），每个配置会话仅一次 */
+/** 默认勾选原厂厢下的原厂标准厢：只在进入厢体步骤时生效（冷机步骤不加价），每个配置会话仅一次 */
 let bodyDefaulted = false
 function ensureDefaultBody() {
   if (bodyDefaulted || store.body || !bodies.value.length) return
-  const defBody = bodies.value.find((b) => b.name === '原厂普通厢')
+  const defBody = bodies.value.find((b) => b.group === '原厂厢' && b.name === '原厂标准厢')
   if (defBody) {
     store.setBody(defBody)
     bodyDefaulted = true
   }
 }
 
+/** 预选车型标配冷机：只在进入冷机步骤时生效（此前步骤不显示冷机、不加价），每个配置会话仅一次 */
+let refrigeratorDefaulted = false
+function ensureDefaultRefrigerator() {
+  if (refrigeratorDefaulted || store.refrigerator || !refrigerators.value.length) return
+  const def = refrigerators.value.find((r) => r.model === truck.value.defaultAC)
+  if (def) {
+    store.setRefrigerator(def)
+    refrigeratorDefaulted = true
+  }
+}
+
 watch(activeTab, (tab) => {
-  if (tab === 'body') ensureDefaultBody()
+  if (tab === 'refrigerator') ensureDefaultRefrigerator()
+  if (tab === 'body') {
+    ensureDefaultBody()
+    if (store.body) {
+      bodyGroup.value = store.body.group === '山东中集厢' ? 'cimc' : 'fac'
+    }
+  }
 })
 
-/** 当前 tab 的选项列表（配装按 category 分组） */
+/** 底盘选项：车有 chassisOptions 用数据档位（兼容 admin 存的 JSON 字符串），否则自动生成标配项；图片统一用当前冷藏车主图 */
+const chassisOptions = computed(() => {
+  let opts = truck.value?.chassisOptions
+  if (typeof opts === 'string') {
+    try {
+      opts = JSON.parse(opts)
+    } catch {
+      opts = null
+    }
+  }
+  const withImg = (list) => list.map((o) => ({ ...o, image: coverImg.value }))
+  if (opts && opts.length) return withImg(opts)
+  return truck.value
+    ? withImg([
+        { id: 'default', name: `${truck.value.name}-标配`, battery: truck.value.battery || '', price: truck.value.price || null, default: true }
+      ])
+    : []
+})
+
+/** 当前 tab 的选项列表（厢体按 group 分组，配装/配件按 category + 车型匹配过滤，肉钩配件仅肉钩厢显示） */
 const currentItems = computed(() => {
+  if (activeTab.value === 'chassis') return chassisOptions.value
   if (activeTab.value === 'refrigerator') return refrigerators.value
-  if (activeTab.value === 'body') return bodies.value
-  return accessories.value.filter((a) => a.category === tabLabel(activeTab.value))
+  if (activeTab.value === 'body') return bodies.value.filter((b) => b.group === (bodyGroup.value === 'cimc' ? '山东中集厢' : '原厂厢'))
+  if (activeTab.value === 'parts') {
+    return accessories.value.filter(
+      (a) =>
+        a.category === '配件' &&
+        (a.fitTypes || []).includes(truck.value?.truckType) &&
+        (!a.hookOnly || !!store.body?.hook)
+    )
+  }
+  return accessories.value.filter(
+    (a) => a.category === accCategory.value && (a.fitTypes || []).includes(truck.value?.truckType)
+  )
+})
+
+/** 厢体配装 tab：通用区（所有厢体）+ 特殊区（仅山东中集厢体，按 type 匹配），区内按 group 分组 */
+const isBodyAccTab = computed(() => activeTab.value === 'accessory' && accCategory.value === '厢体配装')
+
+const bodyAccGroups = computed(() => {
+  const list = accessories.value.filter(
+    (a) => a.category === '厢体配装' && (a.fitTypes || []).includes(truck.value?.truckType)
+  )
+  const groupBy = (items) => {
+    const names = [...new Set(items.map((a) => a.group))]
+    return names.map((n) => ({ title: n, items: items.filter((a) => a.group === n) }))
+  }
+  return {
+    general: groupBy(list.filter((a) => !(a.bodyTypes || []).length)),
+    special: groupBy(list.filter((a) => (a.bodyTypes || []).length && (a.bodyTypes || []).includes(store.body?.type)))
+  }
+})
+
+/** 厢体配装联动：厢体切换时清理不适用特殊项 + 补默认勾选（M系列外蒙皮玻璃钢固定，G/国道内蒙皮标配） */
+function syncBodyAccessories() {
+  const b = store.body
+  const isCimc = b?.group === '山东中集厢'
+  const specials = accessories.value.filter((a) => a.category === '厢体配装' && (a.bodyTypes || []).length)
+  for (const s of specials) {
+    const idx = store.accessories.findIndex((a) => a.id === s.id)
+    if (idx >= 0 && (!isCimc || !(s.bodyTypes || []).includes(b.type))) {
+      store.accessories.splice(idx, 1)
+    }
+  }
+  if (isCimc) {
+    const def =
+      b.type === 'M系列'
+        ? specials.find((s) => s.group === '外蒙皮' && s.name === '外蒙皮-玻璃钢')
+        : specials.find((s) => s.group === '内蒙皮' && s.default)
+    if (def && !store.isAccessorySelected(def.id)) store.accessories.push(def)
+  }
+  // 肉钩配件（hookOnly）：非肉钩厢时移除
+  const hookIdx = store.accessories.findIndex((a) => a.hookOnly)
+  if (hookIdx >= 0 && !b?.hook) store.accessories.splice(hookIdx, 1)
+}
+
+watch(() => store.body, syncBodyAccessories)
+watch(accCategory, (c) => {
+  if (c === '厢体配装') syncBodyAccessories()
+})
+
+/** 底部弹出明细：点击报价栏查看所有已选产品（逐项列出，解决汇总行展示不全） */
+const showDetail = ref(false)
+const detailItems = computed(() => {
+  const items = []
+  if (store.chassis) items.push({ icon: '🔧', name: store.chassis.name, price: store.chassis.price })
+  if (store.refrigerator) items.push({ icon: '❄️', name: store.refrigerator.model, price: store.refrigerator.price })
+  if (store.body) items.push({ icon: '📦', name: store.body.name, price: store.body.price })
+  for (const a of store.accessories) items.push({ icon: a.icon || '📎', name: a.name, price: a.price })
+  return items
+})
+
+/** 分步计价：只累计当前及之前步骤的选择，未配置的后续步骤不计入（底盘页只体现底盘价） */
+const stepTotal = computed(() => {
+  const s = currentStep.value
+  // 底盘页金额只由底盘档位决定：选中=档位价（null 即 0），取消=0，不回退车型价
+  if (s === 0) return store.chassis ? store.chassis.price ?? 0 : 0
+  if (s === 1) return store.vehiclePrice + store.refrigeratorPrice
+  if (s === 2) return store.vehiclePrice + store.refrigeratorPrice + store.bodyPrice
+  if (s === 3) return store.vehiclePrice + store.refrigeratorPrice + store.bodyPrice + store.accessoryTotal
+  return store.totalPrice
 })
 
 function tabLabel(key) {
@@ -77,6 +215,15 @@ function tabLabel(key) {
 
 /** 选项卡片展示属性 */
 function cardProps(item) {
+  if (activeTab.value === 'chassis') {
+    return {
+      title: item.name,
+      subtitle: item.battery || item.engine || '',
+      icon: '🔧',
+      selected: store.chassis && store.chassis.id === item.id,
+      recommended: !!item.default
+    }
+  }
   if (activeTab.value === 'refrigerator') {
     return {
       title: item.model,
@@ -89,23 +236,26 @@ function cardProps(item) {
   if (activeTab.value === 'body') {
     return {
       title: item.name,
-      subtitle: `保温 ${item.thickness} · ${item.material}`,
+      subtitle: item.thickness && item.thickness !== '—' ? `保温 ${item.thickness} · ${item.material}` : '',
       icon: '📦',
       selected: store.body && store.body.id === item.id,
-      recommended: item.name === '原厂普通厢'
+      recommended: item.name === '原厂标准厢'
     }
   }
   return {
     title: item.name,
-    subtitle: item.brand,
+    subtitle: item.desc || item.brand,
     icon: item.icon,
-    selected: store.isAccessorySelected(item.id)
+    selected: store.isAccessorySelected(item.id),
+    recommended: !!item.default
   }
 }
 
-/** 冷机/厢体单选（再点已选=取消），配装多选切换 */
+/** 底盘/冷机/厢体单选（再点已选=取消），配装多选切换 */
 function selectItem(item) {
-  if (activeTab.value === 'refrigerator') {
+  if (activeTab.value === 'chassis') {
+    store.setChassis(store.chassis?.id === item.id ? null : item)
+  } else if (activeTab.value === 'refrigerator') {
     store.setRefrigerator(store.refrigerator?.id === item.id ? null : item)
   } else if (activeTab.value === 'body') {
     store.setBody(store.body?.id === item.id ? null : item)
@@ -114,9 +264,9 @@ function selectItem(item) {
   }
 }
 
-/** 返回：配置步骤内逐层回退（配装→厢体→冷机），到第一步（冷机）后才退出到车型介绍页（退出即清空已选配置） */
+/** 返回：配置步骤内逐层回退（配件→配装→厢体→冷机→底盘），到第一步（底盘）后才退出到车型介绍页（退出即清空已选配置） */
 function goBack() {
-  const prevTab = { body: 'refrigerator', door: 'body', temp: 'body', other: 'body', safety: 'door' }[activeTab.value]
+  const prevTab = { refrigerator: 'chassis', body: 'refrigerator', accessory: 'body', parts: 'accessory' }[activeTab.value]
   if (prevTab) {
     activeTab.value = prevTab
     return
@@ -126,12 +276,13 @@ function goBack() {
 }
 
 /** 向导推进：每步选完后点"下一步"进入下一步骤 */
-const nextText = computed(() => (currentStep.value >= 3 ? '确认报价' : '下一步'))
+const nextText = computed(() => (currentStep.value >= 4 ? '确认报价' : '下一步'))
 
 function goNext() {
-  if (currentStep.value === 0) activeTab.value = 'body'
-  else if (currentStep.value === 1) activeTab.value = 'door'
-  else if (currentStep.value === 2) activeTab.value = 'safety'
+  if (currentStep.value === 0) activeTab.value = 'refrigerator'
+  else if (currentStep.value === 1) activeTab.value = 'body'
+  else if (currentStep.value === 2) activeTab.value = 'accessory'
+  else if (currentStep.value === 3) activeTab.value = 'parts'
   else {
     store.configTab = activeTab.value
     router.push('/save')
@@ -139,6 +290,12 @@ function goNext() {
 }
 
 onMounted(async () => {
+  // 首次进入：默认勾选底盘标配档（车有档位取 default 项/首项，无档位自动生成标配项）
+  if (!store.chassis) {
+    const opts = truck.value?.chassisOptions
+    const def = (opts && opts.length ? opts : chassisOptions.value)[0]
+    if (def) store.setChassis(def)
+  }
   // 从确认页返回：恢复到进入确认页前的步骤 tab
   if (store.configTab) {
     activeTab.value = store.configTab
@@ -153,13 +310,12 @@ onMounted(async () => {
     refrigerators.value = rs
     bodies.value = bs
     accessories.value = as
-    // 首次进入：预选车型标配冷机（厢体默认勾选由 ensureDefaultBody 在进入厢体步骤时处理）
-    if (!store.refrigerator) {
-      const def = rs.find((r) => r.model === truck.value.defaultAC)
-      if (def) store.setRefrigerator(def)
+    // 数据加载完成时若已在该步骤（如用户快速切换），补上默认勾选
+    if (activeTab.value === 'refrigerator') ensureDefaultRefrigerator()
+    if (activeTab.value === 'body') {
+      ensureDefaultBody()
+      if (store.body) bodyGroup.value = store.body.group === '山东中集厢' ? 'cimc' : 'fac'
     }
-    // 数据加载完成时若已在厢体步骤（如用户快速切换），补上默认勾选
-    if (activeTab.value === 'body') ensureDefaultBody()
   } finally {
     loading.value = false
   }
@@ -203,13 +359,39 @@ onMounted(async () => {
           v-for="t in subTabs"
           :key="t.key"
           class="tab"
-          :class="{ on: activeTab === t.key }"
-          @click="activeTab = t.key"
+          :class="{ on: subTabOn(t) }"
+          @click="selectSubTab(t)"
         >{{ t.label }}</button>
       </div>
 
       <div v-if="loading" class="list-body">
         <div v-for="i in 4" :key="i" class="skeleton opt-skeleton"></div>
+      </div>
+
+      <div v-else-if="isBodyAccTab" class="list-body">
+        <template v-for="grp in bodyAccGroups.general" :key="grp.title">
+          <h3 class="group-title">{{ grp.title }}</h3>
+          <OptionCard
+            v-for="item in grp.items"
+            :key="item.id"
+            :item="item"
+            v-bind="cardProps(item)"
+            @select="selectItem"
+          />
+        </template>
+        <template v-if="store.body?.group === '山东中集厢' && bodyAccGroups.special.length">
+          <h3 class="group-title special-title">特殊配装（山东中集厢体专属）</h3>
+          <template v-for="grp in bodyAccGroups.special" :key="grp.title">
+            <h4 class="group-sub">{{ grp.title }}</h4>
+            <OptionCard
+              v-for="item in grp.items"
+              :key="item.id"
+              :item="item"
+              v-bind="cardProps(item)"
+              @select="selectItem"
+            />
+          </template>
+        </template>
       </div>
 
       <div v-else-if="currentItems.length" class="list-body">
@@ -232,18 +414,51 @@ onMounted(async () => {
     </div>
 
     <div class="bottom-bar">
-      <div class="bar-price">
-        <span class="bar-label">当前报价</span>
+      <div class="bar-price" @click="showDetail = true">
+        <span class="bar-label">当前报价 <span class="bar-hint"><van-icon name="arrow-up" size="10" /> 明细</span></span>
         <div class="bar-amount">
-          <AnimatedNumber :value="store.totalPrice" />
+          <AnimatedNumber :value="stepTotal" />
         </div>
-        <span v-if="store.selectionSummary" class="bar-summary">{{ store.selectionSummary }}</span>
+        <span v-if="store.selectionSummary" class="bar-summary ellipsis">{{ store.selectionSummary }}</span>
       </div>
       <button class="bar-btn" @click="goNext">
         {{ nextText }}
         <van-icon name="arrow" size="16" />
       </button>
     </div>
+
+    <van-popup v-model:show="showDetail" position="bottom" round class="detail-popup">
+      <div class="sheet-head">
+        <span class="sheet-title">已选产品明细</span>
+        <button class="sheet-close" @click="showDetail = false">
+          <van-icon name="cross" size="18" />
+        </button>
+      </div>
+      <div v-if="detailItems.length" class="sheet-list">
+        <div v-for="(it, i) in detailItems" :key="i" class="sheet-item">
+          <span class="si-icon">{{ it.icon }}</span>
+          <span class="si-name ellipsis">{{ it.name }}</span>
+          <span class="si-price" :class="{ na: it.price == null }">
+            {{ it.price != null ? '¥' + fmtPrice(it.price) : '面议' }}
+          </span>
+        </div>
+      </div>
+      <div v-else class="sheet-empty">暂未选择产品</div>
+      <div class="sheet-foot">
+        <div v-if="store.purchaseTax > 0" class="sf-line">
+          <span>购置税</span>
+          <span class="num">¥{{ fmtPrice(store.purchaseTax) }}</span>
+        </div>
+        <div v-if="store.feeTotal > 0" class="sf-line">
+          <span>运输及其他</span>
+          <span class="num">¥{{ fmtPrice(store.feeTotal) }}</span>
+        </div>
+        <div class="sf-total">
+          <span>总计</span>
+          <span class="num">¥{{ fmtPrice(store.finalTotal) }}</span>
+        </div>
+      </div>
+    </van-popup>
   </div>
 </template>
 
@@ -416,6 +631,29 @@ onMounted(async () => {
   border-radius: 8px;
 }
 
+.group-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-top: 4px;
+}
+
+.group-title:first-child {
+  margin-top: 0;
+}
+
+.special-title {
+  color: var(--primary);
+  margin-top: 16px;
+}
+
+.group-sub {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-top: 10px;
+}
+
 .empty-box {
   display: flex;
   flex-direction: column;
@@ -447,14 +685,142 @@ onMounted(async () => {
   margin-top: 4px;
 }
 
+.bar-price {
+  cursor: pointer;
+  user-select: none;
+}
+
+.bar-hint {
+  font-size: 10px;
+  color: var(--text-placeholder);
+  font-weight: 400;
+  margin-left: 2px;
+}
+
 .bar-summary {
   font-size: 10px;
   color: var(--text-secondary);
   margin-top: 2px;
   max-width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+}
+
+/* 底部弹出：已选产品明细 */
+.detail-popup {
+  max-height: 72vh;
+}
+
+.sheet-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px var(--space-page) 8px;
+}
+
+.sheet-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.sheet-close {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: var(--tag-bg);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.sheet-list {
+  max-height: 42vh;
+  overflow-y: auto;
+  padding: 4px var(--space-page);
+}
+
+.sheet-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.sheet-item:last-child {
+  border-bottom: none;
+}
+
+.si-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--tag-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.si-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.si-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--price);
+  flex-shrink: 0;
+}
+
+.si-price.na {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.sheet-empty {
+  padding: 32px 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-placeholder);
+}
+
+.sheet-foot {
+  padding: 12px var(--space-page) calc(16px + var(--safe-bottom));
+  border-top: 1px solid var(--border);
+}
+
+.sf-line {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-secondary);
+  padding: 3px 0;
+}
+
+.sf-line .num {
+  color: var(--text-main);
+}
+
+.sf-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-top: 8px;
+}
+
+.sf-total .num {
+  color: var(--price);
+  font-size: 20px;
 }
 
 .bar-btn {

@@ -1,6 +1,6 @@
 {
-  "version": 9,
-  "updatedAt": "2026-08-07T07:15:11.000Z",
+  "version": 21,
+  "updatedAt": "2026-08-11T07:58:20.000Z",
   "brands": [
     {
       "id": "all",
@@ -51,6 +51,16 @@
         "#F43F5E"
       ],
       "logo": "data/images/brand-karry.webp"
+    },
+    {
+      "id": "jac",
+      "name": "江淮",
+      "short": "淮",
+      "colors": [
+        "#F59E0B",
+        "#F97316"
+      ],
+      "logo": "data/images/brand-jac.webp"
     }
   ],
   "trucks": [
@@ -142,7 +152,22 @@
       "gallery": [
         "data/images/t03.webp"
       ],
-      "description": "高顶双卧、加宽卧铺、铝合金油箱、50L尿素罐、免维护蓄电池2个、多功能方向盘、铝合金储气筒、前后鼓式制动器、5.5T前桥、9T后桥、气囊式减震驾驶员座椅、电动调节整体式镜头、电加热除霜外后视镜、冷暖空调、定速巡航、LED自动大灯、彩屏仪表。"
+      "description": "高顶双卧、加宽卧铺、铝合金油箱、50L尿素罐、免维护蓄电池2个、多功能方向盘、铝合金储气筒、前后鼓式制动器、5.5T前桥、9T后桥、气囊式减震驾驶员座椅、电动调节整体式镜头、电加热除霜外后视镜、冷暖空调、定速巡航、LED自动大灯、彩屏仪表。",
+      "chassisOptions": [
+        {
+          "id": "om-240p",
+          "name": "福田欧曼行星-240P",
+          "engine": "康明斯 四缸 240马力",
+          "price": null,
+          "default": true
+        },
+        {
+          "id": "om-300p",
+          "name": "福田欧曼行星-300P",
+          "engine": "康明斯 六缸 300马力",
+          "price": null
+        }
+      ]
     },
     {
       "id": "t04",
@@ -190,9 +215,9 @@
       "cargoLen": "3.1米",
       "totalMass": "3.2吨",
       "payload": "—",
-      "battery": "41.86kWh/53.58kWh 磷酸铁锂电池",
+      "battery": "42度/53度 磷酸铁锂电池",
       "tankVolume": "—",
-      "price": 0,
+      "price": 167000,
       "defaultAC": "黑盾HE380底置",
       "video": "https://sichuancaoxue.oss-cn-hangzhou.aliyuncs.com/%E8%A7%86%E9%A2%91/%E6%B1%9F%E9%93%83VAN%E5%8D%A1.mp4",
       "tags": [
@@ -202,7 +227,22 @@
       "gallery": [
         "data/images/t05.webp"
       ],
-      "description": "单排驾驶室、中轴、前升窗-司机侧一键降、卤素大灯、自动开闭前大灯 内饰颜色:暗驼棕、电动前空调、针织座椅、仪表-9寸悬浮、液刹制动、防抱死系统、后置后驱4x2、中体、2座、冰白(素色漆)、日间行车灯、中控锁、驻车方式-机械手刹+轮边驻车、电池包加热方式-电加热膜、低顶、钢轮辋、少片簧(3片)、T-BOX-JBOX、遥控可折叠钥匙、EPS电子转向、制动暖一体前空调、制动器-前盘式制动+后鼓式制动、怀挡式电子换挡器、动力电池类型-磷酸铁锂、快充"
+      "description": "单排驾驶室、中轴、前升窗-司机侧一键降、卤素大灯、自动开闭前大灯 内饰颜色:暗驼棕、电动前空调、针织座椅、仪表-9寸悬浮、液刹制动、防抱死系统、后置后驱4x2、中体、2座、冰白(素色漆)、日间行车灯、中控锁、驻车方式-机械手刹+轮边驻车、电池包加热方式-电加热膜、低顶、钢轮辋、少片簧(3片)、T-BOX-JBOX、遥控可折叠钥匙、EPS电子转向、制动暖一体前空调、制动器-前盘式制动+后鼓式制动、怀挡式电子换挡器、动力电池类型-磷酸铁锂、快充",
+      "chassisOptions": [
+        {
+          "id": "vancar-42",
+          "name": "江铃VAN卡-42度",
+          "battery": "42度 磷酸铁锂电池",
+          "price": 167000,
+          "default": true
+        },
+        {
+          "id": "vancar-53",
+          "name": "江铃VAN卡-53度",
+          "battery": "53度 磷酸铁锂电池",
+          "price": 180000
+        }
+      ]
     },
     {
       "id": "t06",
@@ -220,7 +260,7 @@
       "cargoLen": "4米",
       "totalMass": "4.5吨",
       "payload": "—",
-      "battery": "100.46kWh 磷酸铁锂电池",
+      "battery": "100度/140度 磷酸铁锂电池",
       "tankVolume": "—",
       "price": 150000,
       "defaultAC": "黑盾HE460Y",
@@ -232,7 +272,22 @@
       "gallery": [
         "data/images/t06.webp"
       ],
-      "description": "后置后驱冷藏专用底盘、江铃E路达中体1890mm/宽体2060mm单排前翻驾驶室、3360轴距、液刹、机械驻车、前后鼓、宁德时代风冷/水冷100.46度磷酸铁锂动力电池、动力电池包加热、12V启动电池、TZ230XS001博世液冷电机、227匹马力、电驱后桥、EPS电子助力转向、标准轮距、前后少片簧、外后视镜电加热、电动窗、中控锁、遥控钥匙、日间行车灯、LED自动大灯、前雾灯、电动空调、针织座椅、7寸液晶仪表、ABS、四向可调多功能方向盘、定速巡航、收音机、倒车雷达、快充(可选2C)、7.00R16钢轮"
+      "description": "后置后驱冷藏专用底盘、江铃E路达中体1890mm/宽体2060mm单排前翻驾驶室、3360轴距、液刹、机械驻车、前后鼓、宁德时代风冷/水冷100.46度磷酸铁锂动力电池、动力电池包加热、12V启动电池、TZ230XS001博世液冷电机、227匹马力、电驱后桥、EPS电子助力转向、标准轮距、前后少片簧、外后视镜电加热、电动窗、中控锁、遥控钥匙、日间行车灯、LED自动大灯、前雾灯、电动空调、针织座椅、7寸液晶仪表、ABS、四向可调多功能方向盘、定速巡航、收音机、倒车雷达、快充(可选2C)、7.00R16钢轮",
+      "chassisOptions": [
+        {
+          "id": "eluda-100",
+          "name": "江铃E路达-100度",
+          "battery": "100度 磷酸铁锂电池",
+          "price": null,
+          "default": true
+        },
+        {
+          "id": "eluda-140",
+          "name": "江铃E路达-140度",
+          "battery": "140度 磷酸铁锂电池",
+          "price": null
+        }
+      ]
     },
     {
       "id": "t07",
@@ -595,84 +650,24 @@
       "description": "宁德时代磷酸铁锂140kWh、2C-双枪快充、驾驶室宽度2030、3座、PU气囊减震座椅通风加热、双顶置文件柜、副驾储物盒、遥控钥匙、液冷、LED大灯、蓝牙、电动空调、倒车雷达+倒车影像（仪表）、前后轮端免维护+3/5+3板簧、双枪充电、电调后视镜、加热后视镜、前盘后鼓、EPB+Autohold、无钥匙进入+一键启动、12.3寸大屏、360环视，轮胎规格: 7.00R16 10PR, 带导流罩"
     },
     {
-      "id": "t19",
-      "brandId": "karry",
-      "brand": "奇瑞开瑞",
-      "name": "奇瑞开瑞X3",
-      "truckType": "微卡",
-      "energy": "纯电",
-      "engine": "汇川永磁电机（峰值50kW）",
-      "power": "68马力",
-      "emission": "零排放（纯电）",
-      "wheelbase": "3050mm",
-      "gearbox": "单级减速齿轮箱",
-      "tire": "185R14LT",
-      "cargoLen": "3米",
-      "totalMass": "2.7吨",
-      "payload": "—",
-      "battery": "38.7kWh 磷酸铁锂电池",
-      "tankVolume": "—",
-      "price": 0,
-      "defaultAC": "黑盾HE380底置",
-      "video": "",
-      "tags": [
-        "冷藏专用",
-        "小身材"
-      ],
-      "gallery": [
-        "data/images/t19.webp"
-      ],
-      "description": "国轩磷酸铁锂电池、倒车雷达、倒车影像、胎压监测、手动冷暖空调、中控锁、遥控钥匙、电动车窗、前盘后鼓、7英寸成像仪表盘、手机APP功能、电动助力转向、蓝牙、怀挡"
-    },
-    {
-      "id": "t20",
-      "brandId": "karry",
-      "brand": "奇瑞开瑞",
-      "name": "奇瑞开瑞X7",
-      "truckType": "小卡",
-      "energy": "纯电",
-      "engine": "汇川永磁电机（峰值100kW）",
-      "power": "136马力",
-      "emission": "零排放（纯电）",
-      "wheelbase": "3600mm",
-      "gearbox": "单级减速齿轮箱",
-      "tire": "185R15LT",
-      "cargoLen": "3.7米",
-      "totalMass": "4.3吨",
-      "payload": "—",
-      "battery": "63.98kWh 磷酸铁锂电池",
-      "tankVolume": "—",
-      "price": 0,
-      "defaultAC": "黑盾HE380Y",
-      "video": "",
-      "tags": [
-        "冷藏专用",
-        "大空间"
-      ],
-      "gallery": [
-        "data/images/t20.webp"
-      ],
-      "description": "开瑞磷酸铁锂62.98、快充、倒车雷达、手动冷暖空调、中控锁、遥控钥匙、电动车窗、前盘后鼓、电动助力转向、导流罩（选装）、备胎、高位制动灯、旋扭换挡、轮胎规格: 185R15LT 8PR, 3/5+2"
-    },
-    {
       "id": "t21",
       "brandId": "foton",
       "brand": "福田",
       "name": "福田奥铃速运",
       "truckType": "轻卡",
       "energy": "油车",
-      "engine": "—",
-      "power": "—",
+      "engine": "福田康明斯F2.8NS6B156（2.78L 柴油）",
+      "power": "156马力",
       "emission": "国六",
-      "wheelbase": "—",
-      "gearbox": "—",
-      "tire": "—",
-      "cargoLen": "4.2米",
-      "totalMass": "—",
-      "payload": "—",
+      "wheelbase": "3360mm",
+      "gearbox": "万里扬6档变速箱",
+      "tire": "7.00R16LT 8PR",
+      "cargoLen": "4.085米",
+      "totalMass": "4.495吨",
+      "payload": "1.1吨",
       "battery": "—",
       "tankVolume": "—",
-      "price": 0,
+      "price": 168000,
       "defaultAC": "黑盾460Y",
       "video": "",
       "tags": [
@@ -681,7 +676,152 @@
       "gallery": [
         "data/images/t21.webp"
       ],
-      "description": "福田奥铃速运冷藏车。详细参数待补充。"
+      "description": "福田奥铃速运156马力冷藏车（国六），公告BJ5048XLC8JEA-AB2，车身5.995×2.26×3.33米，货箱4.085×2.1×2.1米，速比4.33。\n轴距：3360mm\n制动：气刹\n驱动型式：4×2\n最高车速：110km/h\n其他配置：ABS防抱死、福田康明斯F2.8发动机、万里扬6档变速箱。"
+    },
+    {
+      "id": "t22",
+      "brandId": "foton",
+      "brand": "福田",
+      "name": "福田祥菱M1",
+      "truckType": "微卡",
+      "energy": "油车",
+      "engine": "东安DAM16KL（1.597L 汽油）",
+      "power": "122马力",
+      "emission": "国六",
+      "wheelbase": "2750mm",
+      "gearbox": "东安5档变速箱",
+      "tire": "175R14LT 8PR",
+      "cargoLen": "3.12米",
+      "totalMass": "3.495吨",
+      "payload": "1.615吨",
+      "battery": "—",
+      "tankVolume": "50L",
+      "price": 87500,
+      "defaultAC": "黑盾380Y",
+      "video": "",
+      "tags": [
+        "冷藏专用"
+      ],
+      "gallery": [
+        "data/images/t22.webp"
+      ],
+      "description": "福田祥菱M1 1.6L汽油冷藏车（国六），公告BJ5031XLC5JV4-61，车身5.07×1.8×2.49米，货箱3.12×1.62×1.56米，蓝牌。\n轴距：2750mm\n制动：液刹\n驱动型式：4×2\n最高车速：100km/h\n其他配置：ABS防抱死、手动空调、电动车窗、单排驾驶室。"
+    },
+    {
+      "id": "t23",
+      "brandId": "foton",
+      "brand": "福田",
+      "name": "福田祥菱Q",
+      "truckType": "微卡",
+      "energy": "纯电",
+      "engine": "永磁同步电机",
+      "power": "—",
+      "emission": "零排放（纯电）",
+      "wheelbase": "3300mm",
+      "gearbox": "单级减速齿轮箱",
+      "tire": "175/75R14LT 10PR",
+      "cargoLen": "3.2米",
+      "totalMass": "3.015吨",
+      "payload": "1.085吨",
+      "battery": "41.86 kWh 磷酸铁锂电池",
+      "tankVolume": "—",
+      "price": 139000,
+      "defaultAC": "华盛火星EV380",
+      "video": "",
+      "tags": [
+        "冷藏专用"
+      ],
+      "gallery": [
+        "data/images/t23.webp"
+      ],
+      "description": "福田祥菱Q分体式纯电动冷藏车，公告BJ5030XLCEV72，车身5.515×1.835×2.675米，货箱3.2×1.63×1.67米。\n轴距：3300mm\n驱动型式：4x2\n最高车速：90km/h\n电池：41.86kWh 磷酸铁锂\n其他配置：ABS防抱死、单排驾驶室。"
+    },
+    {
+      "id": "t24",
+      "brandId": "foton",
+      "brand": "福田",
+      "name": "福田祥菱V1",
+      "truckType": "微卡",
+      "energy": "油车",
+      "engine": "东安DAM16KR（1.597L 汽油）",
+      "power": "122马力",
+      "emission": "国六",
+      "wheelbase": "3170mm",
+      "gearbox": "东安5档变速箱",
+      "tire": "175R14LT 8PR",
+      "cargoLen": "3.2米",
+      "totalMass": "2.99吨",
+      "payload": "1.3吨",
+      "battery": "—",
+      "tankVolume": "50L",
+      "price": 76200,
+      "defaultAC": "黑盾380Y",
+      "video": "",
+      "tags": [
+        "冷藏专用"
+      ],
+      "gallery": [
+        "data/images/t24.webp"
+      ],
+      "description": "福田祥菱V1 1.6L汽油冷藏车（国六），公告BJ5030XLC4JV5-11，车身5.36×1.79×2.61米，货箱3.2×1.63×1.67米，蓝牌。\n轴距：3170mm\n制动：液刹\n驱动型式：4×2\n最高车速：110km/h\n其他配置：ABS防抱死、离合助力、转向助力、单排驾驶室。"
+    },
+    {
+      "id": "t25",
+      "brandId": "jmc",
+      "brand": "江铃",
+      "name": "江铃顺达 3.8米",
+      "truckType": "轻卡",
+      "energy": "油车",
+      "engine": "江铃JX493ZLQ6A（2.771L 柴油）",
+      "power": "122马力",
+      "emission": "国六",
+      "wheelbase": "2800mm",
+      "gearbox": "江铃5档变速箱",
+      "tire": "6.50R16LT 10PR",
+      "cargoLen": "3.68米",
+      "totalMass": "4.335吨",
+      "payload": "1.385吨",
+      "battery": "—",
+      "tankVolume": "64L",
+      "price": 150000,
+      "defaultAC": "黑盾380Y",
+      "video": "",
+      "tags": [
+        "冷藏专用"
+      ],
+      "gallery": [
+        "data/images/t25.webp"
+      ],
+      "description": "江铃顺达小卡122马力冷藏车（国六），公告JX5041XLCTC26，车身5.605×2×2.96米，货箱3.68×1.84×1.85米。\n轴距：2800mm\n制动：气刹（断气刹驻车）\n驱动型式：4×2\n最高车速：100km/h\n其他配置：ABS防抱死、离合助力、转向助力、手动空调、蓝牙/收音机。"
+    },
+    {
+      "id": "t26",
+      "brandId": "jac",
+      "brand": "江淮",
+      "name": "江淮鲲鹏ET9",
+      "truckType": "轻卡",
+      "energy": "纯电",
+      "engine": "时代新安永磁同步电机（峰值180kW）",
+      "power": "245马力",
+      "emission": "零排放（纯电）",
+      "wheelbase": "3750mm",
+      "gearbox": "单级减速齿轮箱",
+      "tire": "7.00R16LT 8PR",
+      "cargoLen": "4.055米",
+      "totalMass": "4.495吨",
+      "payload": "0.975吨",
+      "battery": "140.41 kWh 磷酸铁锂电池",
+      "tankVolume": "—",
+      "price": 280000,
+      "defaultAC": "黑盾HE460Y",
+      "video": "",
+      "tags": [
+        "冷藏专用"
+      ],
+      "gallery": [
+        "data/images/t26.webp"
+      ],
+      "description": "江淮1卡坤鹏ET9旗舰版纯电动冷藏车，公告HFC5043XLCPKEV1，车身5.995×2.26×3.43米，货箱4.055×2.1×2.1米，一体化高端冷藏厢（F类标准）。\n轴距：3750mm\n制动：气刹（断气刹驻车）\n驱动型式：4×2\n最高车速：95km/h\n电池：宁德时代140.41kWh磷酸铁锂\n质保：三电系统8年/60万公里。"
     }
   ],
   "refrigerators": [
@@ -830,7 +970,8 @@
       "cooling": "3500W",
       "fitTypes": [
         "轻卡",
-        "小卡"
+        "小卡",
+        "微卡"
       ],
       "desc": "柴油机前置一体机，适合燃油/柴油冷藏车",
       "price": 9000,
@@ -851,13 +992,270 @@
       "desc": "柴油机前置一体机，适合燃油/柴油轻卡及中卡",
       "price": 15000,
       "image": ""
+    },
+    {
+      "id": "r12",
+      "brand": "开利",
+      "model": "开利D5",
+      "energy": "油车",
+      "powerSource": "电动（12/24V直流）",
+      "tempRange": "-20℃ ~ +20℃",
+      "cooling": "5300W（0℃）/ 2700W（-20℃）",
+      "fitTypes": [
+        "轻卡"
+      ],
+      "desc": "CITIMAX D5分体式电驱冷机，前置安装，适用23m³厢体，轻卡4.2米厢冷链配送主力。可选备电、蒸发器延长组件、开利灵思智控服务。",
+      "price": 0,
+      "image": "data/images/coolers/cooler-d5-d7.webp"
+    },
+    {
+      "id": "r13",
+      "brand": "开利",
+      "model": "开利D6",
+      "energy": "油车",
+      "powerSource": "电动（12/24V直流）",
+      "tempRange": "-20℃ ~ +20℃",
+      "cooling": "6300W（0℃）/ 3100W（-20℃）",
+      "fitTypes": [
+        "轻卡"
+      ],
+      "desc": "CITIMAX D6分体式电驱冷机，前置安装，适用33m³厢体，中型轻卡大厢体冷链配送。可选备电、蒸发器延长组件、开利灵思智控服务。",
+      "price": 0,
+      "image": "data/images/coolers/cooler-d5-d7.webp"
+    },
+    {
+      "id": "r14",
+      "brand": "开利",
+      "model": "开利D7",
+      "energy": "油车",
+      "powerSource": "电动（12/24V直流）",
+      "tempRange": "-20℃ ~ +20℃",
+      "cooling": "7100W（0℃）/ 3700W（-20℃）",
+      "fitTypes": [
+        "轻卡"
+      ],
+      "desc": "CITIMAX D7分体式电驱冷机，前置安装，适用44m³厢体，大制冷量适合重载冷链运输。可选备电、蒸发器延长组件、开利灵思智控服务。",
+      "price": 0,
+      "image": "data/images/coolers/cooler-d5-d7.webp"
+    },
+    {
+      "id": "r15",
+      "brand": "开利",
+      "model": "开利S550",
+      "energy": "油车",
+      "powerSource": "柴油机（独立式）",
+      "tempRange": "-20℃ ~ +20℃",
+      "cooling": "5465W（0℃）/ 3165W（-20℃）",
+      "fitTypes": [
+        "轻卡"
+      ],
+      "desc": "Supra 550一体式柴油机冷机，前置安装，适用31m³厢体，独立发电无需外接电源，轻卡冷链经典款。可选备电、油厢、电瓶及电瓶盒。",
+      "price": 0,
+      "image": "data/images/coolers/cooler-s550-750.webp"
+    },
+    {
+      "id": "r16",
+      "brand": "开利",
+      "model": "开利S750",
+      "energy": "油车",
+      "powerSource": "柴油机（独立式）",
+      "tempRange": "-20℃ ~ +20℃",
+      "cooling": "6780W（0℃）/ 3750W（-20℃）",
+      "fitTypes": [
+        "轻卡",
+        "中卡"
+      ],
+      "desc": "Supra 750一体式柴油机冷机，前置安装，适用38m³厢体，制冷量充足，轻卡/中卡长途冷链。可选备电、油厢、电瓶及电瓶盒。",
+      "price": 0,
+      "image": "data/images/coolers/cooler-s550-750.webp"
+    },
+    {
+      "id": "r17",
+      "brand": "开利",
+      "model": "开利C1000",
+      "energy": "油车",
+      "powerSource": "电动（24V直流）",
+      "tempRange": "-20℃ ~ +20℃",
+      "cooling": "10200W（0℃）/ 5100W（-20℃）",
+      "fitTypes": [
+        "中卡"
+      ],
+      "desc": "CITIMAX 1000高顶系列分体式冷机，前置安装，适用60m³厢体，中大型冷藏车干线运输主力，精准温控±1℃。可选备电、蒸发器延长组件。",
+      "price": 0,
+      "image": "data/images/coolers/cooler-c1000-1200.webp"
+    },
+    {
+      "id": "r18",
+      "brand": "开利",
+      "model": "开利C1100",
+      "energy": "油车",
+      "powerSource": "电动（24V直流）",
+      "tempRange": "-20℃ ~ +20℃",
+      "cooling": "10200W（0℃）/ 5100W（-20℃）",
+      "fitTypes": [
+        "中卡"
+      ],
+      "desc": "CITIMAX 1100高顶系列分体式冷机，前置安装，适用60m³冷藏厢，冷量充足满足干线运输，蒸发器仅225mm厚，厢内温度-29℃~30℃。可选备电、蒸发器延长组件。",
+      "price": 0,
+      "image": "data/images/coolers/cooler-c1000-1200.webp"
+    },
+    {
+      "id": "r19",
+      "brand": "开利",
+      "model": "开利C1200",
+      "energy": "油车",
+      "powerSource": "柴油机（独立式）",
+      "tempRange": "-20℃ ~ +20℃",
+      "cooling": "12000W（0℃）/ 6900W（-20℃）",
+      "fitTypes": [
+        "中卡"
+      ],
+      "desc": "一体式柴油机冷机，前置安装，适用62m³厢体，12000W大冷量旗舰机型，适合大型冷藏厢干线运输。可选备电、油厢、电瓶及电瓶盒。",
+      "price": 0,
+      "image": "data/images/coolers/cooler-c1000-1200.webp"
+    },
+    {
+      "id": "r20",
+      "brand": "开利",
+      "model": "开利S850",
+      "energy": "油车",
+      "powerSource": "柴油机（独立式）",
+      "tempRange": "-20℃ ~ +20℃",
+      "cooling": "7800W（0℃）/ 4900W（-20℃）",
+      "fitTypes": [
+        "中卡"
+      ],
+      "desc": "Supra 850+一体式柴油机冷机，前置安装，适用48m³厢体，中卡主力机型，制冷强劲打冷快。可选备电、油厢、电瓶及电瓶盒。",
+      "price": 0,
+      "image": "data/images/coolers/cooler-s850-1250.webp"
+    },
+    {
+      "id": "r21",
+      "brand": "开利",
+      "model": "开利S1050",
+      "energy": "油车",
+      "powerSource": "柴油机（独立式）",
+      "tempRange": "-20℃ ~ +20℃",
+      "cooling": "9100W（0℃）/ 5600W（-20℃）",
+      "fitTypes": [
+        "中卡"
+      ],
+      "desc": "Supra 1050一体式柴油机冷机，前置安装，适用54m³厢体，中卡干线冷链主力，大冷量快速降温。可选备电、油厢、电瓶及电瓶盒。",
+      "price": 0,
+      "image": "data/images/coolers/cooler-s850-1250.webp"
+    },
+    {
+      "id": "r22",
+      "brand": "开利",
+      "model": "开利S1150",
+      "energy": "油车",
+      "powerSource": "柴油机（独立式）",
+      "tempRange": "-20℃ ~ +20℃",
+      "cooling": "10500W（0℃）/ 6300W（-20℃）",
+      "fitTypes": [
+        "中卡"
+      ],
+      "desc": "Supra 1150一体式柴油机冷机，前置安装，适用61m³厢体，中卡大厢体首选，制冷制热能力强。可选备电、油厢、电瓶及电瓶盒。",
+      "price": 0,
+      "image": "data/images/coolers/cooler-s1150.webp"
+    },
+    {
+      "id": "r23",
+      "brand": "开利",
+      "model": "开利S1250",
+      "energy": "油车",
+      "powerSource": "柴油机（独立式）",
+      "tempRange": "-20℃ ~ +20℃",
+      "cooling": "12000W（0℃）/ 6900W（-20℃）",
+      "fitTypes": [
+        "中卡"
+      ],
+      "desc": "Supra 1250一体式柴油机冷机，前置安装，适用62m³厢体，旗舰大冷量，适合大型冷藏厢干线运输。可选备电、油厢、电瓶及电瓶盒。",
+      "price": 0,
+      "image": "data/images/coolers/cooler-s850-1250.webp"
+    },
+    {
+      "id": "r24",
+      "brand": "开利",
+      "model": "开利P6",
+      "energy": "纯电",
+      "powerSource": "电动（350-750V高压）",
+      "tempRange": "-20℃ ~ +20℃",
+      "cooling": "5600W（0℃）/ 3600W（-20℃）",
+      "fitTypes": [
+        "轻卡"
+      ],
+      "desc": "PULSOR 6一体式高压电动冷机，前置安装，适用28m³厢体，纯电车型专用，可装备电与电加热，深冷保鲜。",
+      "price": 0,
+      "image": "data/images/coolers/cooler-p6.webp"
+    },
+    {
+      "id": "r26",
+      "brand": "华盛火星",
+      "model": "华盛火星EV300",
+      "energy": "纯电",
+      "powerSource": "—",
+      "tempRange": "—",
+      "cooling": "—",
+      "fitTypes": [
+        "微卡"
+      ],
+      "desc": "参数待补充，请联系销售顾问。",
+      "price": 0,
+      "image": ""
+    },
+    {
+      "id": "r27",
+      "brand": "华盛火星",
+      "model": "华盛火星EV380",
+      "energy": "纯电",
+      "powerSource": "—",
+      "tempRange": "—",
+      "cooling": "—",
+      "fitTypes": [
+        "微卡"
+      ],
+      "desc": "参数待补充，请联系销售顾问。",
+      "price": 0,
+      "image": ""
+    },
+    {
+      "id": "r28",
+      "brand": "华盛火星",
+      "model": "华盛火星EV400",
+      "energy": "纯电",
+      "powerSource": "—",
+      "tempRange": "—",
+      "cooling": "—",
+      "fitTypes": [
+        "小卡",
+        "轻卡"
+      ],
+      "desc": "参数待补充，请联系销售顾问。",
+      "price": 0,
+      "image": ""
+    },
+    {
+      "id": "r29",
+      "brand": "华盛火星",
+      "model": "华盛火星EV600",
+      "energy": "纯电",
+      "powerSource": "—",
+      "tempRange": "—",
+      "cooling": "—",
+      "fitTypes": [
+        "轻卡"
+      ],
+      "desc": "参数待补充，请联系销售顾问。",
+      "price": 0,
+      "image": ""
     }
   ],
   "bodies": [
     {
       "id": "b01",
       "brand": "原厂",
-      "name": "原厂普通厢",
+      "name": "原厂标准厢",
       "thickness": "100mm",
       "material": "玻璃钢+聚氨酯",
       "fitTypes": [
@@ -867,13 +1265,14 @@
         "中卡"
       ],
       "desc": "随车原厂出品，标准保温厢，性价比高",
-      "price": 20000,
-      "image": ""
+      "price": null,
+      "image": "",
+      "group": "原厂厢"
     },
     {
       "id": "b02",
       "brand": "原厂",
-      "name": "原厂普通肉钩厢",
+      "name": "原厂肉钩厢",
       "thickness": "100mm",
       "material": "玻璃钢+聚氨酯+不锈钢肉钩",
       "fitTypes": [
@@ -883,13 +1282,15 @@
         "中卡"
       ],
       "desc": "内置不锈钢肉钩轨道，肉制品挂载运输专用",
-      "price": 23000,
-      "image": ""
+      "price": null,
+      "image": "",
+      "group": "原厂厢",
+      "hook": true
     },
     {
       "id": "b03",
       "brand": "山东中集",
-      "name": "山东中集G系列厢体",
+      "name": "山东中集G系列",
       "thickness": "75-105mm",
       "material": "玻璃钢+硬质聚氨酯",
       "fitTypes": [
@@ -899,184 +1300,479 @@
         "中卡"
       ],
       "desc": "考格尔工艺全封闭板块粘接，自重轻40%，K值≤0.4W/m²·K",
-      "price": 26000,
-      "image": ""
+      "price": null,
+      "image": "",
+      "group": "山东中集厢",
+      "type": "G系列"
     },
     {
-      "id": "b04",
+      "id": "b05",
       "brand": "山东中集",
-      "name": "山东中集K2厢体",
-      "thickness": "100mm",
-      "material": "聚氨酯+铝蒙皮",
+      "name": "山东中集M系列厢体",
+      "group": "山东中集厢",
+      "thickness": "—",
+      "material": "—",
       "fitTypes": [
+        "微卡",
+        "小卡",
         "轻卡",
         "中卡"
       ],
-      "desc": "K2双模发泡工艺，开式发泡聚氨酯保温提升30%，断裂应变15.6%",
-      "price": 32000,
-      "image": ""
+      "desc": "M系列厢体，参数待定",
+      "price": null,
+      "image": "",
+      "type": "M系列"
+    },
+    {
+      "id": "b06",
+      "brand": "山东中集",
+      "name": "国道厢-肉钩厢",
+      "group": "山东中集厢",
+      "thickness": "—",
+      "material": "—",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "desc": "国道厢-肉钩厢，参数待定",
+      "price": null,
+      "image": "",
+      "type": "国道厢",
+      "hook": true
+    },
+    {
+      "id": "b07",
+      "brand": "山东中集",
+      "name": "国道厢-标准厢体",
+      "group": "山东中集厢",
+      "thickness": "—",
+      "material": "—",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "desc": "国道厢-标准厢体，参数待定",
+      "price": null,
+      "image": "",
+      "type": "国道厢"
     }
   ],
   "accessories": [
     {
-      "id": "a01",
-      "icon": "🛗",
-      "name": "液压尾板",
-      "brand": "畅友力",
-      "price": 8500,
-      "category": "门体"
-    },
-    {
-      "id": "a02",
-      "icon": "🔗",
-      "name": "铝合金导轨",
-      "brand": "中集",
-      "price": 2200,
-      "category": "其他"
-    },
-    {
-      "id": "a03",
-      "icon": "🥩",
-      "name": "不锈钢肉钩",
-      "brand": "定制",
-      "price": 1800,
-      "category": "其他"
-    },
-    {
-      "id": "a04",
-      "icon": "📡",
-      "name": "GPS定位监控",
-      "brand": "中交兴路",
-      "price": 4000,
-      "category": "安全配置"
-    },
-    {
-      "id": "a05",
-      "icon": "🌡️",
-      "name": "温度记录仪",
-      "brand": "松芝",
-      "price": 1500,
-      "category": "温控"
-    },
-    {
-      "id": "a06",
-      "icon": "🔲",
-      "name": "铝花纹地板",
-      "brand": "中集",
-      "price": 2500,
-      "category": "其他"
-    },
-    {
-      "id": "a07",
-      "icon": "🌬️",
-      "name": "通风槽",
-      "brand": "中集",
-      "price": 1200,
-      "category": "温控"
-    },
-    {
-      "id": "a08",
-      "icon": "🚪",
-      "name": "侧开门",
-      "brand": "中集",
-      "price": 3000,
-      "category": "门体"
-    },
-    {
-      "id": "a09",
-      "icon": "🧊",
-      "name": "双温区隔板",
-      "brand": "中集",
-      "price": 3500,
-      "category": "温控"
-    },
-    {
-      "id": "a10",
-      "icon": "❄️",
-      "name": "蓄冷板",
-      "brand": "黑盾",
-      "price": 2800,
-      "category": "温控"
-    },
-    {
       "id": "a11",
-      "icon": "🧱",
+      "icon": "🧊",
       "name": "隔温板",
       "brand": "定制",
-      "price": 1000,
-      "category": "温控"
-    },
-    {
-      "id": "a12",
-      "icon": "🛡️",
-      "name": "铝花纹裙边",
-      "brand": "中集",
-      "price": 1500,
-      "category": "其他"
-    },
-    {
-      "id": "a13",
-      "icon": "✨",
-      "name": "不锈钢裙边",
-      "brand": "中集",
-      "price": 2000,
-      "category": "其他"
-    },
-    {
-      "id": "a14",
-      "icon": "🧰",
-      "name": "工具箱",
-      "brand": "定制",
-      "price": 600,
-      "category": "其他"
+      "price": null,
+      "category": "配件",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "desc": "厢体保温隔板"
     },
     {
       "id": "a15",
       "icon": "📹",
       "name": "倒车影像",
       "brand": "定制",
-      "price": 1200,
-      "category": "安全配置"
+      "price": null,
+      "category": "底盘配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ]
     },
     {
-      "id": "a16",
-      "icon": "📷",
-      "name": "行车记录仪",
+      "id": "a21",
+      "icon": "💺",
+      "name": "气囊座椅",
       "brand": "定制",
-      "price": 800,
-      "category": "安全配置"
+      "price": null,
+      "category": "底盘配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ]
     },
     {
-      "id": "a17",
-      "icon": "💡",
-      "name": "紫外线消毒灯",
+      "id": "a22",
+      "icon": "🖥️",
+      "name": "四路监控",
       "brand": "定制",
-      "price": 500,
-      "category": "温控"
+      "price": null,
+      "category": "底盘配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ]
     },
     {
-      "id": "a18",
-      "icon": "🧯",
-      "name": "车载灭火器",
+      "id": "a23",
+      "icon": "🌀",
+      "name": "导流罩",
       "brand": "定制",
-      "price": 200,
-      "category": "安全配置"
+      "price": null,
+      "category": "底盘配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ]
     },
     {
-      "id": "a19",
-      "icon": "⚙️",
-      "name": "备胎架",
+      "id": "a24",
+      "icon": "🟫",
+      "name": "铝花纹地板",
       "brand": "定制",
-      "price": 900,
-      "category": "其他"
+      "price": null,
+      "category": "厢体配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "group": "地板",
+      "mode": "single",
+      "bodyTypes": [],
+      "default": false
     },
     {
-      "id": "a20",
-      "icon": "🛢️",
-      "name": "底盘装甲",
+      "id": "a25",
+      "icon": "🟫",
+      "name": "铝地台",
       "brand": "定制",
-      "price": 1300,
-      "category": "安全配置"
+      "price": null,
+      "category": "厢体配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "group": "地板",
+      "mode": "single",
+      "bodyTypes": [],
+      "default": false
+    },
+    {
+      "id": "a26",
+      "icon": "🟫",
+      "name": "不锈钢花纹地板",
+      "brand": "定制",
+      "price": null,
+      "category": "厢体配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "group": "地板",
+      "mode": "single",
+      "bodyTypes": [],
+      "default": false
+    },
+    {
+      "id": "a27",
+      "icon": "📏",
+      "name": "裙边 ≤8公分",
+      "brand": "定制",
+      "price": null,
+      "category": "厢体配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "group": "裙边高度",
+      "mode": "single",
+      "bodyTypes": [],
+      "default": false
+    },
+    {
+      "id": "a28",
+      "icon": "📏",
+      "name": "裙边 20公分",
+      "brand": "定制",
+      "price": null,
+      "category": "厢体配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "group": "裙边高度",
+      "mode": "single",
+      "bodyTypes": [],
+      "default": false
+    },
+    {
+      "id": "a29",
+      "icon": "📏",
+      "name": "裙边 30公分",
+      "brand": "定制",
+      "price": null,
+      "category": "厢体配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "group": "裙边高度",
+      "mode": "single",
+      "bodyTypes": [],
+      "default": false
+    },
+    {
+      "id": "a30",
+      "icon": "📏",
+      "name": "裙边 45公分",
+      "brand": "定制",
+      "price": null,
+      "category": "厢体配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "group": "裙边高度",
+      "mode": "single",
+      "bodyTypes": [],
+      "default": false
+    },
+    {
+      "id": "a31",
+      "icon": "🚪",
+      "name": "额外侧门",
+      "brand": "定制",
+      "price": 2000,
+      "category": "厢体配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "group": "额外侧门",
+      "mode": "toggle",
+      "bodyTypes": [],
+      "default": false
+    },
+    {
+      "id": "a32",
+      "icon": "🧱",
+      "name": "外蒙皮-预涂钢",
+      "brand": "定制",
+      "price": null,
+      "category": "厢体配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "group": "外蒙皮",
+      "mode": "single",
+      "bodyTypes": [
+        "G系列",
+        "国道厢"
+      ],
+      "default": false
+    },
+    {
+      "id": "a33",
+      "icon": "🧱",
+      "name": "外蒙皮-玻璃钢",
+      "brand": "定制",
+      "price": null,
+      "category": "厢体配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "group": "外蒙皮",
+      "mode": "single",
+      "bodyTypes": [
+        "G系列",
+        "M系列",
+        "国道厢"
+      ],
+      "default": false
+    },
+    {
+      "id": "a34",
+      "icon": "🎨",
+      "name": "内蒙皮-VR热塑版",
+      "brand": "定制",
+      "price": null,
+      "category": "厢体配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "group": "内蒙皮",
+      "mode": "single",
+      "bodyTypes": [
+        "G系列",
+        "国道厢"
+      ],
+      "default": true
+    },
+    {
+      "id": "a35",
+      "icon": "🎨",
+      "name": "内蒙皮-原色铝",
+      "brand": "定制",
+      "price": null,
+      "category": "厢体配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "group": "内蒙皮",
+      "mode": "single",
+      "bodyTypes": [
+        "G系列",
+        "国道厢"
+      ],
+      "default": false
+    },
+    {
+      "id": "a36",
+      "icon": "🎨",
+      "name": "内蒙皮-不锈钢",
+      "brand": "定制",
+      "price": null,
+      "category": "厢体配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "group": "内蒙皮",
+      "mode": "single",
+      "bodyTypes": [
+        "G系列",
+        "国道厢"
+      ],
+      "default": false
+    },
+    {
+      "id": "a37",
+      "icon": "❄️",
+      "name": "后蒸发器",
+      "brand": "",
+      "price": null,
+      "category": "温控配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "desc": "冷机后蒸发器"
+    },
+    {
+      "id": "a38",
+      "icon": "🔥",
+      "name": "带加热",
+      "brand": "",
+      "price": null,
+      "category": "温控配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "desc": "冷机带加热功能"
+    },
+    {
+      "id": "a39",
+      "icon": "🔋",
+      "name": "带备电",
+      "brand": "",
+      "price": null,
+      "category": "温控配装",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "desc": "冷机带备电功能"
+    },
+    {
+      "id": "a40",
+      "icon": "🪜",
+      "name": "撑杆",
+      "brand": "",
+      "price": null,
+      "category": "配件",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "desc": "货物撑杆"
+    },
+    {
+      "id": "a41",
+      "icon": "📺",
+      "name": "多媒体",
+      "brand": "",
+      "price": null,
+      "category": "配件",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "desc": "车载多媒体"
+    },
+    {
+      "id": "a42",
+      "icon": "🪝",
+      "name": "肉钩",
+      "brand": "",
+      "price": null,
+      "category": "配件",
+      "fitTypes": [
+        "微卡",
+        "小卡",
+        "轻卡",
+        "中卡"
+      ],
+      "desc": "不锈钢肉钩（肉钩厢专用）",
+      "hookOnly": true
     }
   ]
 }
