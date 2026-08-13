@@ -17,15 +17,7 @@ const router = useRouter()
 const quote = ref(null)
 const notFound = ref(false)
 
-const validUntil = computed(() => {
-  if (!quote.value?.createdAt) return ''
-  const d = new Date(quote.value.createdAt)
-  d.setDate(d.getDate() + 30)
-  const pad = (n) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
-})
-
-/** 配置明细行（车辆/冷机/厢体/配装各项/运输及其他） */
+/** 配置明细行（车辆/冷机/厢体/配装各项/运输及其他/优惠） */
 const detailLines = computed(() => {
   const q = quote.value
   if (!q) return []
@@ -43,8 +35,14 @@ const detailLines = computed(() => {
   }
   const fee = Number(q.transportFee || 0) + Number(q.otherFees || 0)
   if (fee > 0) lines.push({ label: '运输及其他', value: fee })
+  if (q.discountValue > 0) {
+    lines.push({ label: '原价', value: q.grossTotal || q.total, origin: true })
+    lines.push({ label: '优惠', value: q.discountValue, discount: true })
+  }
   return lines
 })
+
+const hasDiscount = computed(() => (quote.value?.discountValue || 0) > 0)
 
 function loadQuote() {
   try {
@@ -65,7 +63,7 @@ function exportPdf() {
 
 async function share() {
   const q = quote.value
-  const text = `【冷藏车报价单 ${q.no}】${q.customer?.name || ''} · ${q.truck?.name || ''} · 合计 ¥${fmtPrice(q.total || 0)}`
+  const text = `【冷藏车报价单 ${q.no}】${q.truck?.name || ''} · 成交价 ¥${fmtPrice(q.total || 0)}`
   try {
     if (navigator.share) {
       await navigator.share({ title: `冷藏车报价单 ${q.no}`, text })
@@ -124,26 +122,6 @@ async function saveImage() {
       </div>
 
       <div class="card q-card">
-        <h2 class="q-title">客户信息</h2>
-        <div class="kv-row">
-          <span class="kv-label">客户名称</span>
-          <span class="kv-value">{{ quote.customer?.name || '—' }}</span>
-        </div>
-        <div class="kv-row">
-          <span class="kv-label">联系人</span>
-          <span class="kv-value">{{ quote.customer?.name || '—' }}</span>
-        </div>
-        <div class="kv-row">
-          <span class="kv-label">联系电话</span>
-          <span class="kv-value num">{{ quote.customer?.phone || '—' }}</span>
-        </div>
-        <div class="kv-row">
-          <span class="kv-label">有效期至</span>
-          <span class="kv-value num">{{ validUntil }}</span>
-        </div>
-      </div>
-
-      <div class="card q-card">
         <h2 class="q-title">车型信息</h2>
         <div class="truck-row">
           <div class="truck-thumb">
@@ -169,6 +147,8 @@ async function saveImage() {
         <div v-for="line in detailLines" :key="line.label" class="line-row">
           <span class="line-name ellipsis">{{ line.label }}</span>
           <span v-if="line.text" class="line-value">{{ line.value }}</span>
+          <span v-else-if="line.discount" class="line-value line-discount num">-¥{{ fmtPrice(line.value) }}</span>
+          <span v-else-if="line.origin" class="line-value line-origin num">¥{{ fmtPrice(line.value) }}</span>
           <span v-else-if="line.value" class="line-value num">¥{{ fmtPrice(line.value) }}</span>
           <span v-else class="line-value line-na">面议</span>
         </div>
@@ -182,7 +162,7 @@ async function saveImage() {
         </div>
         <div class="q-divider"></div>
         <div class="total-row">
-          <span class="total-label">合计总价</span>
+          <span class="total-label">{{ hasDiscount ? '成交价' : '合计总价' }}</span>
           <span class="total-value num">¥{{ fmtPrice(quote.total || 0) }}</span>
         </div>
       </div>
@@ -387,6 +367,17 @@ async function saveImage() {
   font-weight: 500;
   color: var(--text-secondary);
   font-size: 13px;
+}
+
+.line-origin {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+.line-discount {
+  color: var(--price);
+  font-weight: 600;
 }
 
 .line-row {

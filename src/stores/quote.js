@@ -26,6 +26,11 @@ export const useQuoteStore = defineStore('quote', () => {
   /** 进入确认页前的配置步骤 tab（仅内存，确认页返回时恢复） */
   const configTab = ref('')
 
+  /* ========== 优惠状态（销售折扣） ========== */
+  const discountType = ref('none') // 'none' | 'rate'（折扣折数） | 'amount'（优惠金额）
+  const discountRate = ref(0) // 折数，如 9.5 表示 95 折
+  const discountAmount = ref(0) // 优惠金额（元）
+
   /* ========== 价格计算（实时联动） ========== */
   /** 车辆价格：由底盘档位决定（档位价覆盖整车价）；无档位车的"标配"档位已携带车型基础价，取消选择=0 */
   const vehiclePrice = computed(() => {
@@ -57,8 +62,25 @@ export const useQuoteStore = defineStore('quote', () => {
       feeTotal.value
   )
 
-  /** 最终总价（含购置税）：确认报价页 / 保存的报价单使用 */
-  const finalTotal = computed(() => totalPrice.value + purchaseTax.value)
+  /** 原价（含购置税，未优惠）：确认报价页展示 */
+  const grossTotal = computed(() => totalPrice.value + purchaseTax.value)
+
+  /** 优惠金额：按折扣（折数）或按金额（元）计算，封顶原价 */
+  const discountValue = computed(() => {
+    if (discountType.value === 'rate') {
+      const rate = Number(discountRate.value) || 0
+      if (rate <= 0 || rate >= 10) return 0
+      return Math.min(Math.round((grossTotal.value * (10 - rate)) / 10), grossTotal.value)
+    }
+    if (discountType.value === 'amount') {
+      const amt = Number(discountAmount.value) || 0
+      return Math.min(Math.max(amt, 0), grossTotal.value)
+    }
+    return 0
+  })
+
+  /** 最终成交价（含购置税 - 优惠）：确认报价页 / 保存的报价单使用 */
+  const finalTotal = computed(() => grossTotal.value - discountValue.value)
 
   /** 底部栏已选摘要：底盘/冷机/厢体/配装（未选则省略） */
   const selectionSummary = computed(() => {
@@ -107,6 +129,9 @@ export const useQuoteStore = defineStore('quote', () => {
     otherFees.value = 0
     note.value = ''
     customer.value = { name: '', phone: '', company: '', address: '' }
+    discountType.value = 'none'
+    discountRate.value = 0
+    discountAmount.value = 0
   }
 
   function setChassis(c) {
@@ -126,6 +151,9 @@ export const useQuoteStore = defineStore('quote', () => {
     transportFee.value = 0
     otherFees.value = 0
     note.value = ''
+    discountType.value = 'none'
+    discountRate.value = 0
+    discountAmount.value = 0
   }
 
   function setBody(b) {
@@ -184,6 +212,11 @@ export const useQuoteStore = defineStore('quote', () => {
       transportFee: transportFee.value,
       otherFees: otherFees.value,
       note: note.value,
+      discountType: discountType.value,
+      discountRate: discountRate.value,
+      discountAmount: discountAmount.value,
+      discountValue: discountValue.value,
+      grossTotal: grossTotal.value,
       total: finalTotal.value,
       createdAt: Date.now()
     }
@@ -210,6 +243,9 @@ export const useQuoteStore = defineStore('quote', () => {
     otherFees.value = 0
     note.value = ''
     customer.value = { name: '', phone: '', company: '', address: '' }
+    discountType.value = 'none'
+    discountRate.value = 0
+    discountAmount.value = 0
   }
 
   /* ========== 持久化 ========== */
@@ -223,7 +259,10 @@ export const useQuoteStore = defineStore('quote', () => {
       transportFee: transportFee.value,
       otherFees: otherFees.value,
       note: note.value,
-      customer: customer.value
+      customer: customer.value,
+      discountType: discountType.value,
+      discountRate: discountRate.value,
+      discountAmount: discountAmount.value
     }),
     (state) => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
@@ -245,6 +284,9 @@ export const useQuoteStore = defineStore('quote', () => {
         otherFees.value = saved.otherFees || 0
         note.value = saved.note || ''
         customer.value = saved.customer || { name: '', phone: '', company: '', address: '' }
+        discountType.value = saved.discountType || 'none'
+        discountRate.value = saved.discountRate || 0
+        discountAmount.value = saved.discountAmount || 0
       }
     } catch (e) {
       /* 忽略损坏数据 */
@@ -261,6 +303,9 @@ export const useQuoteStore = defineStore('quote', () => {
     otherFees,
     note,
     customer,
+    discountType,
+    discountRate,
+    discountAmount,
     lastQuote,
     configTab,
     vehiclePrice,
@@ -272,6 +317,8 @@ export const useQuoteStore = defineStore('quote', () => {
     feeTotal,
     purchaseTax,
     totalPrice,
+    grossTotal,
+    discountValue,
     finalTotal,
     selectionSummary,
     configStep,

@@ -189,11 +189,12 @@ watch(accCategory, (c) => {
 /** 底部弹出明细：点击报价栏查看所有已选产品（逐项列出，解决汇总行展示不全） */
 const showDetail = ref(false)
 const detailItems = computed(() => {
+  const truckImg = store.truck?.gallery?.[0] || store.truck?.image || ''
   const items = []
-  if (store.chassis) items.push({ icon: '🔧', name: store.chassis.name, price: store.chassis.price })
-  if (store.refrigerator) items.push({ icon: '❄️', name: store.refrigerator.model, price: store.refrigerator.price })
-  if (store.body) items.push({ icon: '📦', name: store.body.name, price: store.body.price })
-  for (const a of store.accessories) items.push({ icon: a.icon || '📎', name: a.name, price: a.price })
+  if (store.chassis) items.push({ icon: '🔧', img: truckImg, name: store.chassis.name, price: store.chassis.price })
+  if (store.refrigerator) items.push({ icon: '❄️', img: store.refrigerator.image || '', name: store.refrigerator.model, price: store.refrigerator.price })
+  if (store.body) items.push({ icon: '📦', img: store.body.image || '', name: store.body.name, price: store.body.price })
+  for (const a of store.accessories) items.push({ icon: a.icon || '📎', img: '', name: a.name, price: a.price })
   return items
 })
 
@@ -436,7 +437,8 @@ onMounted(async () => {
       </div>
       <div v-if="detailItems.length" class="sheet-list">
         <div v-for="(it, i) in detailItems" :key="i" class="sheet-item">
-          <span class="si-icon">{{ it.icon }}</span>
+          <img v-if="it.img" :src="it.img" :alt="it.name" class="si-thumb" />
+          <span v-else class="si-icon">{{ it.icon }}</span>
           <span class="si-name ellipsis">{{ it.name }}</span>
           <span class="si-price" :class="{ na: it.price == null }">
             {{ it.price != null ? '¥' + fmtPrice(it.price) : '面议' }}
@@ -762,6 +764,14 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   font-size: 16px;
+  flex-shrink: 0;
+}
+
+.si-thumb {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
   flex-shrink: 0;
 }
 
