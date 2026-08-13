@@ -726,7 +726,7 @@
       "battery": "41.86 kWh 磷酸铁锂电池",
       "tankVolume": "—",
       "price": 139000,
-      "defaultAC": "华盛火星EV380",
+      "defaultAC": "华盛火星EV300",
       "video": "",
       "tags": [
         "冷藏专用"
@@ -770,7 +770,7 @@
       "brandId": "jmc",
       "brand": "江铃",
       "name": "江铃顺达 3.8米",
-      "truckType": "轻卡",
+      "truckType": "小卡",
       "energy": "油车",
       "engine": "江铃JX493ZLQ6A（2.771L 柴油）",
       "power": "122马力",
@@ -1205,21 +1205,6 @@
       "image": ""
     },
     {
-      "id": "r27",
-      "brand": "华盛火星",
-      "model": "华盛火星EV380",
-      "energy": "纯电",
-      "powerSource": "—",
-      "tempRange": "—",
-      "cooling": "—",
-      "fitTypes": [
-        "微卡"
-      ],
-      "desc": "参数待补充，请联系销售顾问。",
-      "price": 0,
-      "image": ""
-    },
-    {
       "id": "r28",
       "brand": "华盛火星",
       "model": "华盛火星EV400",
@@ -1228,8 +1213,7 @@
       "tempRange": "—",
       "cooling": "—",
       "fitTypes": [
-        "小卡",
-        "轻卡"
+        "小卡"
       ],
       "desc": "参数待补充，请联系销售顾问。",
       "price": 0,
