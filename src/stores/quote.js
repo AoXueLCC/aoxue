@@ -132,6 +132,7 @@ export const useQuoteStore = defineStore('quote', () => {
     discountType.value = 'none'
     discountRate.value = 0
     discountAmount.value = 0
+    configTab.value = ''
   }
 
   function setChassis(c) {
@@ -246,6 +247,7 @@ export const useQuoteStore = defineStore('quote', () => {
     discountType.value = 'none'
     discountRate.value = 0
     discountAmount.value = 0
+    configTab.value = ''
   }
 
   /* ========== 持久化 ========== */

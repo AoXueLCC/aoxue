@@ -162,6 +162,7 @@ export default { components: { AnimatedNumber } }
 }
 
 .bar-summary {
+  display: block;
   font-size: 10px;
   color: var(--text-secondary);
   margin-top: 2px;

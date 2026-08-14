@@ -699,7 +699,9 @@ onMounted(async () => {
   margin-left: 2px;
 }
 
+/* display:block 让 ellipsis 截断生效（span 行内元素不截断会溢出到按钮上） */
 .bar-summary {
+  display: block;
   font-size: 10px;
   color: var(--text-secondary);
   margin-top: 2px;

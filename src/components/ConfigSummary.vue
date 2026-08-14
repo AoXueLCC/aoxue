@@ -4,7 +4,9 @@ import { useQuoteStore } from '../stores/quote'
 import { fmtPrice } from '../mock/helpers'
 
 /**
- * 配置汇总（QuoteConfirmPage）：车辆/底盘/冷机/厢体/配装 + 费用/备注 + 明细 + 总价 40px
+ * 配置汇总（QuoteConfirmPage）：报价单风格，沿用线上旧版报价单设计
+ * 车型图(时间戳角标/编号) + 配置明细 + 费用明细表格 + 成交价
+ * 同时也是"保存图片"长图的截图源，样式即长图效果
  */
 const store = useQuoteStore()
 
@@ -13,9 +15,15 @@ const accessoryNames = computed(() => store.accessories.map((a) => a.name).join(
 /** 车型图（底盘无独立图，按用户要求也用车型图） */
 const truckImg = computed(() => store.truck?.gallery?.[0] || store.truck?.image || '')
 
+/** 报价单号 + 时间戳（进入页面时生成一次，长图/页面一致） */
+const now = new Date()
+const pad = (n) => String(n).padStart(2, '0')
+const timeStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`
+const quoteNo = store.genQuoteNo()
+
 const sections = computed(() => [
   { icon: '🚛', img: truckImg.value, title: '车辆', tag: store.truck ? `${store.truck.truckType} · ${store.truck.energy}` : '', label: store.truck ? store.truck.name : '未选择', price: store.vehiclePrice },
-  { icon: '🔧', img: truckImg.value, title: '底盘', tag: '', label: store.chassis ? store.chassis.name : '未选择', price: store.chassisPrice },
+  { icon: '🔧', img: '', title: '底盘', tag: '', label: store.chassis ? store.chassis.name : '未选择', price: store.chassisPrice },
   { icon: '❄️', img: store.refrigerator?.image || '', title: '冷机', tag: store.refrigerator ? store.refrigerator.cooling : '', label: store.refrigerator ? store.refrigerator.model : '未选择', price: store.refrigeratorPrice },
   { icon: '📦', img: store.body?.image || '', title: '厢体', tag: store.body ? `${store.body.thickness}保温` : '', label: store.body ? store.body.name : '未选择', price: store.bodyPrice },
   { icon: '🧩', img: '', title: '配装', tag: store.accessoryCount ? `${store.accessoryCount}项` : '', label: accessoryNames.value, price: store.accessoryTotal }
@@ -85,58 +93,81 @@ function clearDiscount() {
 
 <template>
   <div class="config-summary">
-    <div
-      v-for="s in sections"
-      :key="s.title"
-      class="summary-section"
-      :class="{ tappable: s.title === '配装' && store.accessoryCount }"
-      @click="onSectionClick(s)"
-    >
-      <img v-if="s.img" :src="s.img" :alt="s.title" class="sec-thumb" />
-      <div class="sec-main">
-        <div class="sec-head">
-          <span v-if="!s.img" class="sec-icon">{{ s.icon }}</span>
-          <span class="sec-title">{{ s.title }}</span>
-          <span v-if="s.tag" class="sec-tag">{{ s.tag }}</span>
-          <van-icon v-if="s.title === '配装' && store.accessoryCount" name="arrow" class="sec-arrow" />
+    <!-- 车型图 + 时间戳角标 + 编号 -->
+    <div class="card media-card">
+      <div class="media">
+        <div
+          v-if="truckImg"
+          class="media-img"
+          :style="{ backgroundImage: `url(${truckImg})` }"
+        ></div>
+        <div v-else class="media-img media-empty">🚛</div>
+        <div class="stamp">
+          <span class="stamp-label">报价生成时间</span>
+          <span class="stamp-time">{{ timeStr }}</span>
         </div>
-        <div v-if="s.label" class="sec-row">
-          <span class="row-label ellipsis">{{ s.label }}</span>
-          <span v-if="s.price" class="row-price num">¥{{ fmtPrice(s.price) }}</span>
-          <span v-else class="row-price row-na">面议</span>
-        </div>
-        <div v-else class="sec-empty">未选择</div>
+      </div>
+      <div class="media-body">
+        <p class="quote-no">报价编号：{{ quoteNo }}</p>
+        <p class="media-name">{{ store.truck ? store.truck.name : '未选择车型' }}</p>
       </div>
     </div>
 
-    <div class="final-card">
-      <div v-for="line in store.priceLines" :key="line.label" class="final-row">
-        <span class="row-name">{{ line.label }}</span>
-        <span v-if="line.value" class="row-value num">¥{{ fmtPrice(line.value) }}</span>
-        <span v-else class="row-value row-na">面议</span>
+    <!-- 配置明细 -->
+    <div class="card">
+      <h3 class="card-title">配置明细</h3>
+      <div
+        v-for="s in sections"
+        :key="s.title"
+        class="cfg-row"
+        :class="{ tappable: s.title === '配装' && store.accessoryCount }"
+        @click="onSectionClick(s)"
+      >
+        <span v-if="!s.img" class="cfg-icon">{{ s.icon }}</span>
+        <div v-else class="cfg-thumb" :style="{ backgroundImage: `url(${s.img})` }"></div>
+        <div class="cfg-main">
+          <div class="cfg-head">
+            <span class="cfg-title">{{ s.title }}</span>
+            <span v-if="s.tag" class="cfg-tag">{{ s.tag }}</span>
+          </div>
+          <div class="cfg-row2">
+            <span class="cfg-label ellipsis">{{ s.label }}</span>
+            <span v-if="s.price" class="cfg-price num">¥{{ fmtPrice(s.price) }}</span>
+            <span v-else class="cfg-price na">面议</span>
+          </div>
+        </div>
+        <van-icon v-if="s.title === '配装' && store.accessoryCount" name="arrow" class="cfg-arrow" />
       </div>
-      <div class="final-row">
-        <span class="row-name">保险费用</span>
-        <span class="row-value row-na">询具体金额请联系销售</span>
+    </div>
+
+    <!-- 费用明细（旧版同款表格） -->
+    <div class="card">
+      <h3 class="card-title">费用明细</h3>
+      <div class="fee-table">
+        <div class="fee-head">
+          <span>项目</span>
+          <span>金额</span>
+        </div>
+        <div v-for="line in store.priceLines" :key="line.label" class="fee-item">
+          <span>{{ line.label }}</span>
+          <span v-if="line.value" class="right num">¥{{ fmtPrice(line.value) }}</span>
+          <span v-else class="right na">面议</span>
+        </div>
+        <div v-if="store.discountValue > 0" class="fee-item">
+          <span>原价</span>
+          <span class="right origin num">¥{{ fmtPrice(store.grossTotal) }}</span>
+        </div>
+        <div class="fee-item discount-row" @click="openDiscount">
+          <span>优惠</span>
+          <span v-if="store.discountValue > 0" class="right discount num">-¥{{ fmtPrice(store.discountValue) }}</span>
+          <span v-else class="right cta">点击设置优惠 <van-icon name="arrow" /></span>
+        </div>
+        <div class="fee-total">
+          <span class="total-label">{{ store.discountValue > 0 ? '成交价' : '合计总价' }}</span>
+          <span class="total-amount num"><AnimatedNumber :value="store.finalTotal" /></span>
+        </div>
       </div>
-      <div class="final-row">
-        <span class="row-name">上户费用</span>
-        <span class="row-value row-na">询具体金额请联系销售</span>
-      </div>
-      <div class="final-divider"></div>
-      <div v-if="store.discountValue > 0" class="final-row">
-        <span class="row-name">原价</span>
-        <span class="row-value origin num">¥{{ fmtPrice(store.grossTotal) }}</span>
-      </div>
-      <div class="final-row discount-row" @click="openDiscount">
-        <span class="row-name">优惠</span>
-        <span v-if="store.discountValue > 0" class="row-value discount num">-¥{{ fmtPrice(store.discountValue) }}</span>
-        <span v-else class="row-value discount-cta">点击设置优惠 <van-icon name="arrow" /></span>
-      </div>
-      <div class="final-total">
-        <span class="total-label">{{ store.discountValue > 0 ? '成交价' : '合计总价' }}</span>
-        <span class="total-value num"><AnimatedNumber :value="store.finalTotal" /></span>
-      </div>
+      <p class="fee-note">以上价格含购置税；保险、上户费用需另行咨询销售</p>
     </div>
 
     <van-popup v-model:show="showDetail" position="bottom" round class="detail-popup">
@@ -238,156 +269,300 @@ export default { components: { AnimatedNumber } }
   gap: var(--space-gap);
 }
 
-.summary-section,
-.final-card {
+/* ============ 通用卡片 ============ */
+.card {
   background: var(--card);
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-1);
   padding: var(--space-card);
 }
 
-.summary-section {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.summary-section.tappable {
-  cursor: pointer;
-}
-
-.summary-section.tappable:active {
-  background: var(--tag-bg);
-}
-
-.sec-thumb {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
-  object-fit: cover;
-  flex-shrink: 0;
-}
-
-.sec-main {
-  flex: 1;
-  min-width: 0;
-}
-
-.sec-head {
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-main);
   margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary);
+  display: inline-block;
 }
 
-.sec-icon {
-  font-size: 14px;
+/* ============ 车型图卡（时间戳角标 + 编号） ============ */
+.media-card {
+  padding: 0;
+  overflow: hidden;
 }
 
-.sec-title {
-  font-size: 14px;
+.media {
+  position: relative;
+}
+
+/* 背景图 cover：html2canvas 对 object-fit 渲染有缺陷会拉伸变形，background-size: cover 稳定 */
+.media-img {
+  width: 100%;
+  height: var(--quote-img-h, 160px);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #e9edf2;
+  display: block;
+}
+
+.media-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 52px;
+  color: #b8bfc9;
+}
+
+.stamp {
+  position: absolute;
+  top: var(--quote-stamp-top, 12px);
+  right: var(--quote-stamp-right, 12px);
+  background: var(--primary);
+  color: #fff;
+  border-radius: 999px;
+  padding: var(--quote-stamp-pad, 6px 12px);
+  text-align: center;
+  line-height: 1.4;
+  box-shadow: 0 2px 8px rgba(0, 102, 255, 0.35);
+}
+
+.stamp-label {
+  font-size: var(--quote-stamp-label, 9px);
+  opacity: 0.9;
+  display: block;
+}
+
+.stamp-time {
+  font-size: var(--quote-stamp-time, 11px);
+  font-weight: 600;
+  display: block;
+}
+
+.media-body {
+  padding: var(--quote-body-pad, 10px 12px 12px);
+}
+
+.quote-no {
+  font-size: var(--quote-no, 11px);
+  color: var(--text-secondary);
+}
+
+.media-name {
+  margin-top: 2px;
+  font-size: var(--quote-name, 14px);
   font-weight: 600;
   color: var(--text-main);
 }
 
-.sec-tag {
-  margin-left: auto;
-  height: 22px;
-  padding: 0 10px;
-  border-radius: var(--radius-chip);
+/* ============ 配置明细 ============ */
+.cfg-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: var(--quote-spec-py, 8px) 0;
+  border-bottom: 1px solid #f2f3f5;
+}
+
+.cfg-row:last-child {
+  border-bottom: none;
+}
+
+.cfg-row.tappable {
+  cursor: pointer;
+}
+
+.cfg-row.tappable:active {
+  background: var(--tag-bg);
+}
+
+.cfg-icon {
+  font-size: var(--quote-icon, 15px);
+  flex-shrink: 0;
+}
+
+.cfg-thumb {
+  width: var(--quote-thumb, 36px);
+  height: var(--quote-thumb, 36px);
+  border-radius: 6px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: var(--tag-bg);
+  flex-shrink: 0;
+}
+
+.cfg-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.cfg-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.cfg-title {
+  font-size: var(--quote-cfg-title, 11px);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.cfg-tag {
+  height: var(--quote-cfg-tag-h, 16px);
+  padding: 0 6px;
+  border-radius: 8px;
   background: var(--tag-bg);
   color: var(--text-secondary);
-  font-size: var(--fs-caption);
+  font-size: var(--quote-cfg-tag, 9px);
   display: inline-flex;
   align-items: center;
 }
 
-.sec-arrow {
-  margin-left: 4px;
-  color: var(--text-secondary);
-}
-
-.sec-row {
+.cfg-row2 {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
 }
 
-.row-label {
-  font-size: var(--fs-body);
-  color: var(--text-main);
+.cfg-label {
+  font-size: var(--quote-label, 13px);
   font-weight: 500;
+  color: var(--text-main);
   min-width: 0;
 }
 
-.row-price {
-  font-size: 15px;
+.cfg-price {
+  font-size: var(--quote-price, 14px);
   font-weight: 700;
   color: var(--price);
   flex-shrink: 0;
 }
 
-.sec-empty {
-  font-size: var(--fs-desc);
-  color: var(--text-placeholder);
+.cfg-price.na {
+  font-size: var(--quote-price-na, 12px);
+  font-weight: 500;
+  color: var(--text-secondary);
 }
 
-.final-row {
+.cfg-arrow {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+/* ============ 费用明细（旧版表格） ============ */
+.fee-table {
+  margin-top: 4px;
+}
+
+.fee-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 2px solid #f2f3f5;
+  font-size: var(--quote-fee-head-fs, 10px);
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fee-head span:last-child {
+  text-align: right;
+}
+
+.fee-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  height: 28px;
-  font-size: var(--fs-body);
+  padding: var(--quote-fee-py, 9px) 0;
+  border-bottom: 1px solid #f2f3f5;
+  font-size: var(--quote-fee-fs, 13px);
   color: var(--text-main);
 }
 
-.row-value {
+.fee-item .right {
   font-weight: 500;
-  color: var(--text-main);
   flex-shrink: 0;
 }
 
-.row-na {
-  font-weight: 500;
+.fee-item .right.na {
+  font-weight: 400;
   color: var(--text-secondary);
-  font-size: 13px;
 }
 
-.final-divider {
-  border-top: 1px dashed var(--border);
-  margin: 8px 0;
+.origin {
+  color: var(--text-secondary);
+  text-decoration: line-through;
+  font-weight: 400 !important;
 }
 
-.final-total {
+.discount-row {
+  cursor: pointer;
+}
+
+.discount-row:active {
+  background: var(--tag-bg);
+}
+
+.discount {
+  color: var(--price);
+  font-weight: 600 !important;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.fee-total {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 10px;
-  padding-top: 2px;
+  background: #f9fafb;
+  margin-top: 8px;
+  padding: var(--quote-fee-total-py, 12px) 10px;
+  border-radius: 6px;
 }
 
 .total-label {
-  font-size: var(--fs-section);
-  font-weight: 600;
+  font-size: var(--quote-fee-total-label, 14px);
+  font-weight: 700;
   color: var(--text-main);
 }
 
-.total-value {
-  font-size: 22px;
+.total-amount {
+  font-size: var(--quote-total, 18px);
   font-weight: 700;
   color: var(--price);
   line-height: 1.2;
 }
 
-.total-value :deep(.animated-price) {
-  font-size: 22px;
+.total-amount :deep(.animated-price) {
+  font-size: var(--quote-total, 18px);
   font-weight: 700;
   color: var(--price);
 }
 
-/* 配装明细弹层 */
+.fee-note {
+  margin-top: 8px;
+  font-size: var(--quote-note, 10px);
+  color: var(--text-secondary);
+}
+
+/* ============ 配装明细弹层 ============ */
 .detail-popup {
   max-height: 72vh;
 }
@@ -474,35 +649,7 @@ export default { components: { AnimatedNumber } }
   color: var(--text-placeholder);
 }
 
-/* 优惠入口 + 原价/成交价 */
-.discount-row {
-  cursor: pointer;
-}
-
-.discount-row:active {
-  background: var(--tag-bg);
-}
-
-.origin {
-  color: var(--text-secondary);
-  text-decoration: line-through;
-  font-weight: 500;
-}
-
-.discount {
-  color: var(--price);
-}
-
-.discount-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 500;
-}
-
-/* 优惠弹层 */
+/* ============ 优惠弹层 ============ */
 .discount-popup {
   max-height: 80vh;
 }
