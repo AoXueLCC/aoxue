@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "冷藏车智能报价系统 - 移动端 H5 (Vue3 + Vite + Vant4 + Pinia)",
+  "description": "奥雪致行-冷藏车指导报价器 - 移动端 H5 (Vue3 + Vite + Vant4 + Pinia)",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

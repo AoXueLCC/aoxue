@@ -84,7 +84,7 @@ router.afterEach((to, from) => {
   const toIdx = to.meta.index ?? 0
   const fromIdx = from.meta.index ?? 0
   pageDirection.value = toIdx >= fromIdx ? 'forward' : 'backward'
-  document.title = to.meta.title ? `${to.meta.title} - 冷藏车智能报价` : '冷藏车智能报价系统'
+  document.title = to.meta.title ? `${to.meta.title} - 奥雪致行-冷藏车指导报价器` : '奥雪致行-冷藏车指导报价器'
 })
 
 export default router

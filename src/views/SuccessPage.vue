@@ -25,10 +25,10 @@ function goHome() {
 async function share() {
   const q = quote.value
   const who = q.customer?.name ? `${q.customer.name} 的` : ''
-  const text = `【冷藏车智能报价】${who}冷藏车配置方案：${q.truck?.name || ''}，总价 ¥${fmtPrice(q.total || 0)}，报价单号 ${q.no || ''}`
+  const text = `【奥雪致行-冷藏车指导报价器】${who}冷藏车配置方案：${q.truck?.name || ''}，总价 ¥${fmtPrice(q.total || 0)}，报价单号 ${q.no || ''}`
   try {
     if (navigator.share) {
-      await navigator.share({ title: '冷藏车智能报价', text })
+      await navigator.share({ title: '奥雪致行-冷藏车指导报价器', text })
     } else {
       await navigator.clipboard.writeText(text)
       showToast('报价信息已复制')
