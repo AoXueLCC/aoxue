@@ -32,7 +32,7 @@ const sections = computed(() => [
 /** 配装明细弹层：点配装模块查看具体已选项 */
 const showDetail = ref(false)
 const detailItems = computed(() =>
-  store.accessories.map((a) => ({ icon: a.icon || '📎', name: a.name, price: a.price }))
+  store.accessories.map((a) => ({ icon: a.icon || '📎', name: a.name, price: store.accessoryPrice(a) }))
 )
 
 function onSectionClick(s) {

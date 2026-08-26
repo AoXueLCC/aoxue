@@ -39,8 +39,37 @@ export const useQuoteStore = defineStore('quote', () => {
   })
   const chassisPrice = computed(() => (chassis.value?.price ?? 0))
   const refrigeratorPrice = computed(() => (refrigerator.value ? refrigerator.value.price : 0))
-  const bodyPrice = computed(() => (body.value ? body.value.price : 0))
-  const accessoryTotal = computed(() => accessories.value.reduce((sum, a) => sum + a.price, 0))
+  /** 厢体价格：黄牌厢体按米计价（pricePerMeter × 厢长），其余固定价 */
+  const bodyPrice = computed(() => {
+    const b = body.value
+    if (!b) return 0
+    if (b.pricePerMeter != null) {
+      const len = parseFloat(truck.value?.cargoLen || '')
+      return len ? Math.round(b.pricePerMeter * len) : 0
+    }
+    return b.price ?? 0
+  })
+  /** 配装价格：按厢长取价（priceByLen 取最近档），无按米档则固定价；null 表示面议 */
+  function accessoryPrice(a) {
+    const pbl = a?.priceByLen
+    if (!pbl) return a?.price ?? null
+    const len = parseFloat(truck.value?.cargoLen || '')
+    if (!len) return null
+    const keys = Object.keys(pbl).map(Number).sort((x, y) => x - y)
+    let best = keys[0]
+    let bestDiff = Math.abs(best - len)
+    for (const k of keys) {
+      const diff = Math.abs(k - len)
+      if (diff < bestDiff || (diff === bestDiff && k > best)) {
+        best = k
+        bestDiff = diff
+      }
+    }
+    return pbl[best] ?? null
+  }
+  const accessoryTotal = computed(() =>
+    accessories.value.reduce((sum, a) => sum + (accessoryPrice(a) ?? 0), 0)
+  )
   const accessoryCount = computed(() => accessories.value.length)
   const feeTotal = computed(() => Number(transportFee.value || 0) + Number(otherFees.value || 0))
 
@@ -207,8 +236,8 @@ export const useQuoteStore = defineStore('quote', () => {
       refrigerator: refrigerator.value
         ? { id: refrigerator.value.id, model: refrigerator.value.model, price: refrigerator.value.price }
         : null,
-      body: body.value ? { id: body.value.id, name: body.value.name, price: body.value.price } : null,
-      accessories: accessories.value.map((a) => ({ id: a.id, name: a.name, price: a.price })),
+      body: body.value ? { id: body.value.id, name: body.value.name, price: bodyPrice.value } : null,
+      accessories: accessories.value.map((a) => ({ id: a.id, name: a.name, price: accessoryPrice(a) })),
       purchaseTax: purchaseTax.value,
       transportFee: transportFee.value,
       otherFees: otherFees.value,
@@ -314,6 +343,7 @@ export const useQuoteStore = defineStore('quote', () => {
     chassisPrice,
     refrigeratorPrice,
     bodyPrice,
+    accessoryPrice,
     accessoryTotal,
     accessoryCount,
     feeTotal,

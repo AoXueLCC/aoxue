@@ -1,6 +1,7 @@
 <script setup>
 import AccessoryCard from './AccessoryCard.vue'
 import { fmtPrice } from '../mock/helpers'
+import { useQuoteStore } from '../stores/quote'
 
 /**
  * 配装列表：多选管理 + 已选汇总
@@ -13,12 +14,12 @@ const props = defineProps({
 
 const emit = defineEmits(['toggle'])
 
-const selectedTotal = () => {
-  const total = props.items
+const store = useQuoteStore()
+
+const selectedTotal = () =>
+  props.items
     .filter((a) => props.selectedIds.includes(a.id))
-    .reduce((sum, a) => sum + a.price, 0)
-  return total
-}
+    .reduce((sum, a) => sum + (store.accessoryPrice(a) ?? 0), 0)
 </script>
 
 <template>

@@ -1,15 +1,27 @@
 <script setup>
+import { computed } from 'vue'
 import { fmtPrice } from '../mock/helpers'
+import { useQuoteStore } from '../stores/quote'
 
 /**
  * 配装（选装件）卡片：图标/名称/品牌/价格 + 勾选状态
+ * 价格由 store 计算（地板等按厢长取价），0→免费，null→面议
  */
-defineProps({
+const props = defineProps({
   item: { type: Object, required: true },
   selected: { type: Boolean, default: false }
 })
 
 const emit = defineEmits(['toggle'])
+
+const store = useQuoteStore()
+
+const priceText = computed(() => {
+  const p = store.accessoryPrice(props.item)
+  if (p == null) return '面议'
+  if (p === 0) return '免费'
+  return `¥${fmtPrice(p)}`
+})
 </script>
 
 <template>
@@ -20,7 +32,7 @@ const emit = defineEmits(['toggle'])
       <span class="brand">{{ item.brand }}</span>
     </div>
     <div class="right">
-      <span class="price">¥{{ fmtPrice(item.price) }}</span>
+      <span class="price">{{ priceText }}</span>
       <span class="check" :class="{ checked: selected }">
         <van-icon v-if="selected" name="success" size="12" />
       </span>

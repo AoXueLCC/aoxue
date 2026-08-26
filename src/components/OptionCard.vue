@@ -1,4 +1,5 @@
 <script setup>
+import { computed } from 'vue'
 import { showImagePreview } from 'vant'
 import { fmtPrice } from '../mock/helpers'
 
@@ -13,7 +14,18 @@ const props = defineProps({
   subtitle: { type: String, default: '' },
   icon: { type: String, default: '🧊' },
   selected: { type: Boolean, default: false },
-  recommended: { type: Boolean, default: false }
+  recommended: { type: Boolean, default: false },
+  /** 显式传入的计算价（配装按厢长取价后），null 则回退 item.price */
+  price: { type: Number, default: null }
+})
+
+/** 显示价：按米厢体→¥/米；计算价/固定价 0→免费；null→面议 */
+const priceText = computed(() => {
+  if (props.item.pricePerMeter != null) return `¥${fmtPrice(props.item.pricePerMeter)}/米`
+  const p = props.price != null ? props.price : (props.item.price ?? null)
+  if (p == null) return '面议'
+  if (p === 0) return '免费'
+  return `¥${fmtPrice(p)}`
 })
 
 const emit = defineEmits(['select'])
@@ -45,7 +57,7 @@ function preview() {
       <span v-if="subtitle" class="opt-sub ellipsis">{{ subtitle }}</span>
     </div>
 
-    <span class="opt-price num">{{ item.price ? '¥' + fmtPrice(item.price) : '面议' }}</span>
+    <span class="opt-price num">{{ priceText }}</span>
   </div>
 </template>
 

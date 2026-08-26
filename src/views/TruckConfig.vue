@@ -72,11 +72,16 @@ const coverImg = computed(() =>
   truck.value && truck.value.gallery && truck.value.gallery.length ? truck.value.gallery[0] : ''
 )
 
-/** 默认勾选原厂厢下的原厂标准厢：只在进入厢体步骤时生效（冷机步骤不加价），每个配置会话仅一次 */
+/** 默认勾选厢体：蓝牌默认原厂标准厢，中卡（黄牌油车）默认黄牌厢-国道厢；只在进入厢体步骤时生效，每个配置会话仅一次 */
 let bodyDefaulted = false
 function ensureDefaultBody() {
   if (bodyDefaulted || store.body || !bodies.value.length) return
-  const defBody = bodies.value.find((b) => b.group === '原厂厢' && b.name === '原厂标准厢')
+  const isZhongka = truck.value?.truckType === '中卡'
+  const defBody = bodies.value.find((b) =>
+    isZhongka
+      ? b.group === '山东中集厢' && b.type === '国道厢' && !b.hook
+      : b.group === '原厂厢' && b.name === '原厂标准厢'
+  )
   if (defBody) {
     store.setBody(defBody)
     bodyDefaulted = true
@@ -97,6 +102,7 @@ function ensureDefaultRefrigerator() {
 watch(activeTab, (tab) => {
   if (tab === 'refrigerator') ensureDefaultRefrigerator()
   if (tab === 'body') {
+    if (truck.value?.truckType === '中卡') bodyGroup.value = 'cimc'
     ensureDefaultBody()
     if (store.body) {
       bodyGroup.value = store.body.group === '山东中集厢' ? 'cimc' : 'fac'
@@ -193,8 +199,8 @@ const detailItems = computed(() => {
   const items = []
   if (store.chassis) items.push({ icon: '🔧', img: truckImg, name: store.chassis.name, price: store.chassis.price })
   if (store.refrigerator) items.push({ icon: '❄️', img: store.refrigerator.image || '', name: store.refrigerator.model, price: store.refrigerator.price })
-  if (store.body) items.push({ icon: '📦', img: store.body.image || '', name: store.body.name, price: store.body.price })
-  for (const a of store.accessories) items.push({ icon: a.icon || '📎', img: '', name: a.name, price: a.price })
+  if (store.body) items.push({ icon: '📦', img: store.body.image || '', name: store.body.name, price: store.bodyPrice })
+  for (const a of store.accessories) items.push({ icon: a.icon || '📎', img: '', name: a.name, price: store.accessoryPrice(a) })
   return items
 })
 
@@ -239,14 +245,16 @@ function cardProps(item) {
       title: item.name,
       subtitle: item.thickness && item.thickness !== '—' ? `保温 ${item.thickness} · ${item.material}` : '',
       icon: '📦',
+      price: item.pricePerMeter != null ? null : item.price,
       selected: store.body && store.body.id === item.id,
-      recommended: item.name === '原厂标准厢'
+      recommended: item.name === '原厂标准厢' || item.name === '黄牌厢-国道厢'
     }
   }
   return {
     title: item.name,
     subtitle: item.desc || item.brand,
     icon: item.icon,
+    price: store.accessoryPrice(item),
     selected: store.isAccessorySelected(item.id),
     recommended: !!item.default
   }
@@ -314,6 +322,7 @@ onMounted(async () => {
     // 数据加载完成时若已在该步骤（如用户快速切换），补上默认勾选
     if (activeTab.value === 'refrigerator') ensureDefaultRefrigerator()
     if (activeTab.value === 'body') {
+      if (truck.value?.truckType === '中卡') bodyGroup.value = 'cimc'
       ensureDefaultBody()
       if (store.body) bodyGroup.value = store.body.group === '山东中集厢' ? 'cimc' : 'fac'
     }
