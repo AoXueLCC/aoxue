@@ -1,9 +1,10 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { showToast } from 'vant'
+import { showToast, showDialog } from 'vant'
+import { jsPDF } from 'jspdf'
 import { HISTORY_KEY } from '../stores/quote'
-import { fmtPrice } from '../mock/helpers'
+import { fmtPrice, buildShareText, copyText } from '../mock/helpers'
 import { captureDomAsImage, previewImage } from '../utils/exportImage'
 
 /**
@@ -22,9 +23,9 @@ const detailLines = computed(() => {
   const q = quote.value
   if (!q) return []
   const lines = [
-    { label: '车辆价格', value: q.truck?.price || 0 },
-    { label: '冷机价格', value: q.refrigerator?.price || 0 },
-    { label: '厢体价格', value: q.body?.price || 0 }
+    { label: '车辆价格', name: q.truck?.name, value: q.truck?.price || 0 },
+    { label: '冷机价格', name: q.refrigerator?.model, value: q.refrigerator?.price || 0 },
+    { label: '厢体价格', name: q.body?.name, value: q.body?.price || 0 }
   ]
   if (q.chassis) lines.push({ label: '底盘配置', value: q.chassis.name, text: true })
   if (q.accessories?.length) {
@@ -57,22 +58,71 @@ function loadQuote() {
 
 onMounted(loadQuote)
 
-function exportPdf() {
-  window.print()
+const pdfing = ref(false)
+
+/** 把报价单截图（带二维码页脚长图）排版为 A4 PDF 直接下载；超出单页时按 A4 高度切片分页 */
+async function exportPdf() {
+  if (pdfing.value || !quote.value) return
+  pdfing.value = true
+  try {
+    const dataUrl = await captureDomAsImage(document.querySelector('.quote-main'))
+    const img = await new Promise((resolve) => {
+      const i = new Image()
+      i.onload = () => resolve(i)
+      i.onerror = () => resolve(null)
+      i.src = dataUrl
+    })
+    if (!img) throw new Error('pdf image load failed')
+
+    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
+    const pageW = 210
+    const pageH = 297
+    const imgW = pageW
+    const imgH = (img.height / img.width) * pageW
+    if (imgH <= pageH) {
+      pdf.addImage(dataUrl, 'PNG', 0, 0, imgW, imgH)
+    } else {
+      const canvas = document.createElement('canvas')
+      canvas.width = img.width
+      canvas.height = img.height
+      canvas.getContext('2d').drawImage(img, 0, 0)
+      const srcSliceH = Math.floor((img.height * pageH) / imgH)
+      let srcY = 0
+      let pageIdx = 0
+      while (srcY < img.height) {
+        const h = Math.min(srcSliceH, img.height - srcY)
+        const slice = document.createElement('canvas')
+        slice.width = img.width
+        slice.height = h
+        slice.getContext('2d').drawImage(canvas, 0, srcY, img.width, h, 0, 0, img.width, h)
+        if (pageIdx > 0) pdf.addPage()
+        pdf.addImage(slice.toDataURL('image/png'), 'PNG', 0, 0, imgW, (h / img.width) * pageW)
+        srcY += h
+        pageIdx++
+      }
+    }
+    pdf.save(`${quote.value.no || '冷藏车报价单'}.pdf`)
+  } catch {
+    showToast('导出PDF失败，请重试')
+  } finally {
+    pdfing.value = false
+  }
 }
 
 async function share() {
-  const q = quote.value
-  const text = `【冷藏车报价单 ${q.no}】${q.truck?.name || ''} · 成交价 ¥${fmtPrice(q.total || 0)}`
-  try {
-    if (navigator.share) {
-      await navigator.share({ title: `冷藏车报价单 ${q.no}`, text })
-    } else {
-      await navigator.clipboard.writeText(text)
-      showToast('报价信息已复制')
+  const text = buildShareText(quote.value)
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: `奥雪致行-冷藏车指导报价器 ${quote.value?.no || ''}`, text })
+      return
+    } catch (e) {
+      if (e?.name === 'AbortError') return // 用户取消分享面板，不提示
     }
-  } catch (e) {
-    /* 用户取消分享，忽略 */
+  }
+  if (await copyText(text)) {
+    showToast('报价明细已复制')
+  } else {
+    showDialog({ title: '自动复制失败，请长按下方文本手动复制', message: text, confirmButtonText: '知道了' })
   }
 }
 
@@ -145,7 +195,7 @@ async function saveImage() {
       <div class="card q-card">
         <h2 class="q-title">配置明细</h2>
         <div v-for="line in detailLines" :key="line.label" class="line-row">
-          <span class="line-name ellipsis">{{ line.label }}</span>
+          <span class="line-name ellipsis">{{ line.name ? `${line.label}（${line.name}）` : line.label }}</span>
           <span v-if="line.text" class="line-value">{{ line.value }}</span>
           <span v-else-if="line.discount" class="line-value line-discount num">-¥{{ fmtPrice(line.value) }}</span>
           <span v-else-if="line.origin" class="line-value line-origin num">¥{{ fmtPrice(line.value) }}</span>
@@ -176,9 +226,12 @@ async function saveImage() {
           <span>保存图片</span>
         </template>
       </button>
-      <button class="action-item" @click="exportPdf">
-        <van-icon name="printer-o" size="20" />
-        <span>导出PDF</span>
+      <button class="action-item" :disabled="pdfing" @click="exportPdf">
+        <van-loading v-if="pdfing" size="18" color="var(--text-secondary)" />
+        <template v-else>
+          <van-icon name="printer-o" size="20" />
+          <span>导出PDF</span>
+        </template>
       </button>
       <button class="action-item" @click="share">
         <van-icon name="share-o" size="20" />

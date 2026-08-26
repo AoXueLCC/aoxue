@@ -1,11 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { showConfirmDialog, showToast } from 'vant'
 import { HISTORY_KEY } from '../stores/quote'
 import { fmtPrice } from '../mock/helpers'
 
 /**
  * Page 06 HistoryPage：localStorage 报价记录列表（客户名/车型/金额/日期 卡片）
+ * 卡片点击进入详情，删除按钮二次确认后移除该报价单
  */
 const router = useRouter()
 const list = ref([])
@@ -16,14 +18,40 @@ function fmtDate(ts) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
-onMounted(() => {
+function loadList() {
   try {
     const saved = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]')
     list.value = Array.isArray(saved) ? saved.slice().reverse() : []
   } catch (e) {
     list.value = []
   }
-})
+}
+
+/** 删除报价单：二次确认后从 localStorage 移除并刷新列表 */
+function removeQuote(q) {
+  showConfirmDialog({
+    title: '删除报价单',
+    message: `确定删除 ${q.no}${q.customer?.name ? `（${q.customer.name}）` : ''} 的报价吗？删除后不可恢复。`,
+    confirmButtonText: '删除',
+    confirmButtonColor: '#ee0a24'
+  })
+    .then(() => {
+      try {
+        const saved = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]')
+        const next = (Array.isArray(saved) ? saved : []).filter((x) => x.no !== q.no)
+        localStorage.setItem(HISTORY_KEY, JSON.stringify(next))
+        loadList()
+        showToast('报价单已删除')
+      } catch (e) {
+        /* 数据损坏时忽略 */
+      }
+    })
+    .catch(() => {
+      /* 用户取消删除 */
+    })
+}
+
+onMounted(loadList)
 </script>
 
 <template>
@@ -44,8 +72,11 @@ onMounted(() => {
         @click="router.push(`/quote/${q.no}`)"
       >
         <div class="hc-head">
-          <span class="hc-name ellipsis">{{ q.customer?.name || '未填写客户' }}</span>
+          <span class="hc-name ellipsis">{{ q.customer?.name || q.no }}</span>
           <span class="hc-amount num">¥{{ fmtPrice(q.total || 0) }}</span>
+          <button class="hc-del" @click.stop="removeQuote(q)" aria-label="删除报价单">
+            <van-icon name="delete-o" size="16" />
+          </button>
         </div>
         <div class="hc-sub ellipsis">{{ q.truck?.name || '未选择车型' }}</div>
         <div class="hc-foot">
@@ -147,6 +178,25 @@ onMounted(() => {
   font-weight: 700;
   color: var(--price);
   flex-shrink: 0;
+}
+
+.hc-del {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-placeholder);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.hc-del:active {
+  background: var(--danger-light, rgba(238, 10, 36, 0.08));
+  color: var(--danger, #ee0a24);
 }
 
 .hc-sub {

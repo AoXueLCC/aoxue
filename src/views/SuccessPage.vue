@@ -1,9 +1,9 @@
 <script setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { showToast } from 'vant'
+import { showToast, showDialog } from 'vant'
 import { useQuoteStore } from '../stores/quote'
-import { fmtPrice } from '../mock/helpers'
+import { fmtPrice, buildShareText, copyText } from '../mock/helpers'
 
 /**
  * Page 05 SuccessPage：成功图标 → 报价单号/摘要 → 查看报价/分享客户/返回首页
@@ -23,18 +23,19 @@ function goHome() {
 }
 
 async function share() {
-  const q = quote.value
-  const who = q.customer?.name ? `${q.customer.name} 的` : ''
-  const text = `【奥雪致行-冷藏车指导报价器】${who}冷藏车配置方案：${q.truck?.name || ''}，总价 ¥${fmtPrice(q.total || 0)}，报价单号 ${q.no || ''}`
-  try {
-    if (navigator.share) {
+  const text = buildShareText(quote.value)
+  if (navigator.share) {
+    try {
       await navigator.share({ title: '奥雪致行-冷藏车指导报价器', text })
-    } else {
-      await navigator.clipboard.writeText(text)
-      showToast('报价信息已复制')
+      return
+    } catch (e) {
+      if (e?.name === 'AbortError') return // 用户取消分享面板，不提示
     }
-  } catch (e) {
-    /* 用户取消分享，忽略 */
+  }
+  if (await copyText(text)) {
+    showToast('报价明细已复制')
+  } else {
+    showDialog({ title: '自动复制失败，请长按下方文本手动复制', message: text, confirmButtonText: '知道了' })
   }
 }
 </script>
