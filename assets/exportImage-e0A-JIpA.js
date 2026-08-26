@@ -1,4 +1,4 @@
-import{f as gn}from"./helpers-BoiEHpJB.js";import{x as cn,s as wn}from"./index-DS76mi-3.js";/*!
+import{f as gn}from"./helpers-BoiEHpJB.js";import{x as cn,s as wn}from"./index-DnSbFFPp.js";/*!
  * html2canvas 1.4.1 <https://html2canvas.hertzen.com>
  * Copyright (c) 2022 Niklas von Hertzen <https://hertzen.com>
  * Released under MIT License
