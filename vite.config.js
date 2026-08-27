@@ -3,8 +3,8 @@ import vue from '@vitejs/plugin-vue'
 import UnoCSS from 'unocss/vite'
 
 export default defineConfig(({ command }) => ({
-  // 生产部署到 GitHub Pages 子路径 /reefer-quote-vue/，开发环境保持根路径
-  base: command === 'build' ? '/reefer-quote-vue/' : '/',
+  // 生产部署到 GitHub Pages 子路径 /aoxue/，开发环境保持根路径
+  base: command === 'build' ? '/aoxue/' : '/',
   plugins: [vue(), UnoCSS()],
   server: {
     host: true,

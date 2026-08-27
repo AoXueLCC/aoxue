@@ -9,7 +9,7 @@ import PublishPanel from '../components/admin/PublishPanel.vue'
 
 /**
  * 管理后台（/admin）：数据管理 + 图片视频上传 + 一键发布
- * 独立于报价流程，通过 URL 直接访问（https://<pages域名>/reefer-quote-vue/#/admin）
+ * 独立于报价流程，通过 URL 直接访问（https://<pages域名>/aoxue/#/admin）
  */
 const router = useRouter()
 
@@ -17,8 +17,8 @@ const router = useRouter()
 const settings = ref(getSettings())
 const settingForm = ref({
   token: '',
-  owner: '666prx',
-  repo: 'reefer-quote-vue'
+  owner: 'AoXueLCC',
+  repo: 'aoxue'
 })
 const testing = ref(false)
 
@@ -120,11 +120,11 @@ async function onTestConnection() {
           </div>
           <div class="field">
             <label>仓库 Owner（GitHub 用户名）</label>
-            <input v-model="settingForm.owner" class="f-input" placeholder="666prx" />
+            <input v-model="settingForm.owner" class="f-input" placeholder="AoXueLCC" />
           </div>
           <div class="field">
             <label>仓库名</label>
-            <input v-model="settingForm.repo" class="f-input" placeholder="reefer-quote-vue" />
+            <input v-model="settingForm.repo" class="f-input" placeholder="aoxue" />
           </div>
         </div>
 
